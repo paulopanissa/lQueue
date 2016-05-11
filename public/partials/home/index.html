@@ -1,0 +1,83 @@
+<div id="layoutQueue" ng-controller="HomeCtrl as vm">
+    <header>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="clearfix pull-left" style="margin-left: 25px">
+                    <img src="assets/images/logo-queue.png" alt="Logo Queue" class="img-responsive">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h1 class="text-center">AUTO ATENDIMENTO</h1>
+            </div>
+            <div class="col-lg-3">
+                <div class="clearfix pull-right text-right" style="margin: 10px 15px 0 0 ">
+                    <div class="timestamp">
+                        <span class="date">{{ vm.dateDay() }}</span>
+                        <br>
+                        <ng-clock></ng-clock>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div class="row m-b">
+            <div class="col-lg-4 col-lg-offset-8 clearfix">
+                <div class="pull-right">
+                    <button class="btn btn-primary btn-lg"
+                            ng-show="_enableSignature"
+                            ng-click="vm.signatureModal()">
+                        <i class="fa fa-search"></i> CONSULTAR FIRMA
+                    </button>
+                    <button class="btn btn-info btn-lg"
+                            ng-click="vm.refresh()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row m-b-lg" ng-repeat="item in list">
+            <div class="col-lg-12">
+                <button class="btn btn-primary btn-block btn-queue"
+                        ng-click="vm.getQueue(item.id); _waitPrinter = true"
+                        ng-disabled="_waitPrinter">
+                    <i class="fa fa-check" style="margin-right: 10px"></i> {{ item.name }}
+                </button>
+            </div>
+        </div>
+
+        <div class="row m-b-lg">
+            <div class="col-lg-12">
+                <button class="btn btn-primary btn-block btn-queue"
+                        ng-click="vm.getQueue(1); _waitPrinter = true"
+                        ng-disabled="_waitPrinter">
+                    <i class="fa fa-check" style="margin-right: 10px"></i> ATENDIMENTO NORMAL
+                </button>
+            </div>
+        </div>
+
+        <div class="row m-b-lg">
+            <div class="col-lg-12">
+                <button class="btn btn-success btn-block btn-queue"
+                        ng-click="vm.getQueue(3); _waitPrinter = true"
+                        ng-disabled="_waitPrinter">
+                    <i class="fa fa-briefcase" style="margin-right: 10px"></i> ATENDIMENTO MENSALISTA
+                </button>
+            </div>
+        </div>
+
+        <div class="row m-b-lg">
+            <div class="col-lg-12">
+                <button class="btn btn-danger btn-block btn-queue"
+                        ng-click="vm.getQueue(2); _waitPrinter = true"
+                        ng-disabled="_waitPrinter">
+                    <i class="fa fa-wheelchair" style="margin-right: 10px"></i> ATENDIMENTO PRIORITÁRIO
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

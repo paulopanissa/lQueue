@@ -1,0 +1,21 @@
+{
+  "name": "nQueue2",
+  "description": "Notary Queue Manager - Cartorio Ayache",
+  "authors": [
+    "Paulo Panissa Filho"
+  ],
+  "license": "MIT",
+  "homepage": "http://github.com/paulopanissa",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.5.5",
+    "angular-cookies": "~1.5.5",
+    "bootstrap": "~3.3.6",
+    "angular-ui-router": "^0.2.18",
+    "angular-socket-io": "^0.7.0",
+    "oclazyload": "^1.0.9",
+    "satellizer": "^0.14.0",
+    "components-font-awesome": "^4.6.1",
+    "moment": "^2.13.0"
+  }
+}

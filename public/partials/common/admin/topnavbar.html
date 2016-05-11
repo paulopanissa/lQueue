@@ -1,0 +1,16 @@
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header" ng-if="currentUser.access >= 5">
+            <span minimaliza-sidebar></span>
+        </div>
+        <ul class="nav navbar-top-links navbar-right" ng-controller="UserController as vm">
+            <li>
+                <a hre="#"
+                    ng-click="vm.logout()">
+                    <i class="fa fa-sign-out"></i> Sair
+                </a>
+            </li>
+        </ul>
+
+    </nav>
+</div>
