@@ -36,5 +36,7 @@
 <script src="{{ asset('assets/js/plugins/angular-moment/angular-moment.js') }}"></script>
 <!-- [Application AngularJS]-->
 <script src="{!! asset('app/nQueue.js') !!}"></script>
+<script>angular.module('nQueue').constant("CSRF_TOKEN", '{!! csrf_token() !!}');</script>
+
 </body>
 </html>

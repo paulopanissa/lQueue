@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Illuminate\Http\Request;
 use Validator;
+use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -31,6 +33,24 @@ class AuthController extends Controller
     protected $redirectTo = '/';
 
     protected $username = 'username';
+    
+    public function AuthAPI(Request $request){
+         $this->validate($request, [
+            'username' => 'required|exists:users',
+            'password' => 'required'
+         ]);
+        if(Auth::attempt(['username' => $request->username, 'password'=>$request->password])){
+            $token = Auth::user()->api_token;
+            return response()->json(compact('token'));
+        }else{
+            return response()->json(['error' => 'invalid_credentials'], 401);    
+        }
+
+    }
+
+    public function AuthLogout(){
+        Auth::guard('api')->logout();
+    }
 
     /**
      * Create a new authentication controller instance.

@@ -18,20 +18,49 @@
  */
 
 angular
-    .module('nQueue');
-    .factory('listToQueue', listToQueue)
+    .module('nQueue')
+    .factory('QueueModel', QueueModel);
 
+    /**
+     * Socket
+     * @param socketFactory
+     * @returns {*}
+     */
+    function socket(socketFactory){
+        var mySocket = socketFactory({
+            ioSocket: io.connect()
+        });
+        return mySocket;
+    }
 
-
-    function listToQueue($http){
-        var base = '/list-to-queue'
+    /**
+     * Listar para Totem
+     * @param $http
+     * @returns {{get: get}}
+     */
+    function QueueModel($http){
         return {
-            get: function(){
-                return $http.get(base);
+            listToQueue: function(){
+                return $http.get('/list-to-queue');
+            },
+            addInQueue: function($queue){
+                return $http.post('/add-in-queue', {queue: $queue});
             }
         }
     }
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $authProvider, $httpProvider, $provide){
+
+    function addInQueue($http){
+        return function($queue){
+            return $http.get('/add-in-queue', $queue);
+        }
+    }
+/**
+ * Configs and Routers
+ * @param $stateProvider
+ * @param $urlRouterProvider
+ * @param $ocLazyLoadProvider
+ */
+function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider){
 
     $urlRouterProvider.otherwise("/");
 
@@ -40,6 +69,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $authPr
     });
 
     $stateProvider
+        // Solicitar a Senha
         .state('home', {
             url: '/',
             templateUrl: 'partials/home/index.html',
@@ -47,20 +77,30 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $authPr
                 specialClass: 'nqueueBg',
                 pageTitle: 'Retire sua senha - Cartório Ayache'
             }
-        });
+        })
+        // Logar no Sistema
+        .state('auth', {
+            url: '/login',
+            templateUrl: 'partials/auth/login.html',
+            controller: 'AuthCtrl as vm',
+            data: { pageTitle: 'Login', specialClass: 'gray-bg'}
+        })
 
 
 }
 
 
 angular
-    .module(config)
-    .run(function($rootScope, $state, $timeout, amMoment){
+    .module('nQueue')
+    .config(config)
+    .run(function($rootScope, $state, amMoment){
         $rootScope.$state = $state;
 
         // MomentJS locale text in Portugues.
         amMoment.changeLocale('pt-br');
     });
+
+
 /**
  * Titulo da Pagina usar no public/app/config.js
  * @use data: { pageTitle: "Name Page" }
@@ -370,17 +410,64 @@ function MainCtrl($scope){
     $scope.teste = 'Testando';
 }
 
-function HomeCtrl($scope, listToQueue){
+function AuthCtrl(){
+
+}
+
+function HomeCtrl($scope, QueueModel){
+
+    var vm = this;
+
     $scope.list = [];
-    listToQueue
-        .get()
+    QueueModel
+        .listToQueue()
         .success(function(data){
             $scope.list = data;
         });
+
+
+    vm.getQueue = function($queue){
+        QueueModel.
+            addInQueue($queue)
+            .success(function(data){
+                //socket.emit("add:Queue", data);
+                self._waitPrinter = false;
+        })
+
+    };
+
+    /**
+     * Get Date Totem
+     * @returns {string}
+     */
+    vm.dateDay = function(){
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+
+        var yyyy = today.getFullYear();
+        if(dd<10){
+            dd='0'+dd
+        }
+        if(mm<10){
+            mm='0'+mm
+        }
+        var today = dd+'/'+mm+'/'+yyyy;
+        return today;
+    };
+
+    /**
+     * Reload Page
+     */
+    vm.refresh = function(){
+        location.reload();
+    };
 }
 
 angular
     .module('nQueue')
     .controller('MainCtrl', MainCtrl)
+    .controller('AuthCtrl', AuthCtrl)
     .controller('HomeCtrl', HomeCtrl)
+;
 //# sourceMappingURL=nQueue.js.map

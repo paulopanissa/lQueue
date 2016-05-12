@@ -11,6 +11,11 @@
 |
 */
 
+Route::get('/fire', function(){
+   Event::fire(new \App\Events\SendTV('Teste message for event'));
+   return 'Event Fired';
+});
+
 Route::get('/', function(){
        return view('master');
 });
@@ -21,16 +26,19 @@ Route::get('/', function(){
 Route::get('/list-to-queue', 'HomeController@listToQueue');
 Route::post('/add-in-queue', 'HomeController@addInQueue');
 
-Route::get('/find-queue/{id}', 'HomeController@findQueue');
 
+/**
+ * Authenticate API
+ */
+Route::post('api/authenticate', 'Auth\AuthController@AuthAPI');
+Route::get('api/logout', 'Auth\AuthController@AuthLogout');
 
 /**
  * API
  */
 Route::group(['prefix' => 'api/v1', 'middleware'=>['auth:api']], function(){
-       Route::get('/home', function(){
-              $user = \Illuminate\Support\Facades\Auth::guard('api')->user();
-              return view('home')->with(compact('user'));
-       });
+    Route::group(['prefix' => 'queue'], function(){
+       Route::post('', 'Api\QueueController@getInQueue');
+    });
 });
 

@@ -1,0 +1,37 @@
+<div class="middle-box text-center loginscreen animated fadeInDown">
+    <div>
+        <div>
+            <h1 class="logo-name">nQ</h1>
+        </div>
+        <h3>nQueue+</h3>
+        <form class="m-t" role="form">
+            <div class="form-group"
+                 ng-class="{'has-error': (loginError && isErrorType==1)}">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Usuário"
+                       required=""
+                       ng-model="vm.username">
+                <p class="help-block text-right"
+                   ng-if="loginError && isErrorType==1">{{ loginErrorText }}</p>
+            </div>
+            <div class="form-group"
+                 ng-class="{'has-error': (loginError && isErrorType==2)}">
+                <input type="password"
+                       class="form-control"
+                       placeholder="Senha"
+                       required=""
+                       ng-model="vm.password">
+                <p class="help-block text-right"
+                   ng-if="loginError && isErrorType==2">{{ loginErrorText }}</p>
+            </div>
+            <button type="submit"
+                    class="btn btn-primary block full-width m-b"
+                    ng-click="vm.login()"
+                    ng-disabled="!vm.username || (!vm.password || vm.password.length<4)">Entrar</button>
+
+            <!--<a ui-sref="#"><small>Tá com alzhaimer?</small></a>-->
+        </form>
+        <p class="m-t"> <small>nQueue - Sistema de Gerenciamento de Filas &copy; 2016</small> </p>
+    </div>
+</div>

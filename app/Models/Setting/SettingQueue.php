@@ -11,7 +11,7 @@ class SettingQueue extends Model
     ];
 
     public static function toQueue(){
-        return static::select('id', 'name')->get();
+        return static::select('id', 'name', 'btn', 'icon')->get();
     }
 
     public static function setQueue($queue){

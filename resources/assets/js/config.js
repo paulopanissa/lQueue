@@ -1,4 +1,10 @@
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $authProvider, $httpProvider, $provide){
+/**
+ * Configs and Routers
+ * @param $stateProvider
+ * @param $urlRouterProvider
+ * @param $ocLazyLoadProvider
+ */
+function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider){
 
     $urlRouterProvider.otherwise("/");
 
@@ -7,6 +13,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $authPr
     });
 
     $stateProvider
+        // Solicitar a Senha
         .state('home', {
             url: '/',
             templateUrl: 'partials/home/index.html',
@@ -14,17 +21,26 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $authPr
                 specialClass: 'nqueueBg',
                 pageTitle: 'Retire sua senha - Cartório Ayache'
             }
-        });
+        })
+        // Logar no Sistema
+        .state('auth', {
+            url: '/login',
+            templateUrl: 'partials/auth/login.html',
+            controller: 'AuthCtrl as vm',
+            data: { pageTitle: 'Login', specialClass: 'gray-bg'}
+        })
 
 
 }
 
 
 angular
-    .module(config)
-    .run(function($rootScope, $state, $timeout, amMoment){
+    .module('nQueue')
+    .config(config)
+    .run(function($rootScope, $state, amMoment){
         $rootScope.$state = $state;
 
         // MomentJS locale text in Portugues.
         amMoment.changeLocale('pt-br');
     });
+

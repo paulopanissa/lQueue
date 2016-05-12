@@ -3,16 +3,39 @@
  */
 
 angular
-    .module('nQueue');
-    .factory('listToQueue', listToQueue)
+    .module('nQueue')
+    .factory('QueueModel', QueueModel);
 
+    /**
+     * Socket
+     * @param socketFactory
+     * @returns {*}
+     */
+    function socket(socketFactory){
+        var mySocket = socketFactory({
+            ioSocket: io.connect()
+        });
+        return mySocket;
+    }
 
-
-    function listToQueue($http){
-        var base = '/list-to-queue'
+    /**
+     * Listar para Totem
+     * @param $http
+     * @returns {{get: get}}
+     */
+    function QueueModel($http){
         return {
-            get: function(){
-                return $http.get(base);
+            listToQueue: function(){
+                return $http.get('/list-to-queue');
+            },
+            addInQueue: function($queue){
+                return $http.post('/add-in-queue', {queue: $queue});
             }
+        }
+    }
+
+    function addInQueue($http){
+        return function($queue){
+            return $http.get('/add-in-queue', $queue);
         }
     }
