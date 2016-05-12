@@ -33,24 +33,6 @@ class AuthController extends Controller
     protected $redirectTo = '/';
 
     protected $username = 'username';
-    
-    public function AuthAPI(Request $request){
-         $this->validate($request, [
-            'username' => 'required|exists:users',
-            'password' => 'required'
-         ]);
-        if(Auth::attempt(['username' => $request->username, 'password'=>$request->password])){
-            $token = Auth::user()->api_token;
-            return response()->json(compact('token'));
-        }else{
-            return response()->json(['error' => 'invalid_credentials'], 401);    
-        }
-
-    }
-
-    public function AuthLogout(){
-        Auth::guard('api')->logout();
-    }
 
     /**
      * Create a new authentication controller instance.

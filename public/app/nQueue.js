@@ -19,7 +19,11 @@
 
 angular
     .module('nQueue')
-    .factory('QueueModel', QueueModel);
+    .factory('socket', socket)
+    .factory('Login', Login)
+    .factory('QueueModel', QueueModel)
+    .factory('QueueApi', QueueApi)
+    .factory('SessionService', SessionService);
 
     /**
      * Socket
@@ -28,9 +32,27 @@ angular
      */
     function socket(socketFactory){
         var mySocket = socketFactory({
-            ioSocket: io.connect()
+            ioSocket: io.connect('//192.168.10.10:3000')
         });
         return mySocket;
+    }
+
+    function Login($http){
+        return {
+            auth: function(login){
+                return $http({
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    url: '/api/authenticate',
+                    method: 'POST',
+                    data: {
+                        username: login.username,
+                        password: login.password
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -46,12 +68,37 @@ angular
             addInQueue: function($queue){
                 return $http.post('/add-in-queue', {queue: $queue});
             }
+        };
+    }
+
+    function QueueApi($http) {
+        return {
+            inQueue: function () {
+                $http.get('/api/v1/queue');
+            },
+            call: function ($id) {
+
+            },
+            again: function ($id) {
+
+            },
+            status: function ($id, $status) {
+
+            }
         }
     }
 
-    function addInQueue($http){
-        return function($queue){
-            return $http.get('/add-in-queue', $queue);
+    function SessionService(){
+        return {
+            get: function(key){
+                return sessionStorage.getItem(key);
+            },
+            set: function(key, value){
+                return sessionStorage.setItem(key, value);
+            },
+            unset: function(key){
+                return sessionStorage.removeItem(key);
+            }
         }
     }
 /**
@@ -60,7 +107,51 @@ angular
  * @param $urlRouterProvider
  * @param $ocLazyLoadProvider
  */
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider){
+function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authProvider, $httpProvider, $provide){
+
+    function redirectWhenLoggedOut($q, $injector) {
+
+        return {
+
+            responseError: function(rejection) {
+
+                // Need to use $injector.get to bring in $state or else we get
+                // a circular dependency error
+                var $state = $injector.get('$state');
+
+                // Instead of checking for a status code of 400 which might be used
+                // for other reasons in Laravel, we check for the specific rejection
+                // reasons to tell us if we need to redirect to the login state
+                var rejectionReasons = ['token_not_provided', 'token_expired', 'token_absent', 'token_invalid'];
+
+                // Loop through each rejection reason and redirect to the login
+                // state if one is encountered
+                angular.forEach(rejectionReasons, function(value, key) {
+
+                    if(rejection.data.error === value) {
+
+                        // If we get a rejection corresponding to one of the reasons
+                        // in our array, we know we need to authenticate the user so
+                        // we can remove the current user from local storage
+                        localStorage.removeItem('user');
+
+                        // Send the user to the auth state so they can login
+                        $state.go('auth');
+                    }
+                });
+
+                return $q.reject(rejection);
+            }
+        }
+    }
+
+    // Setup for the $httpInterceptor
+    $provide.factory('redirectWhenLoggedOut', redirectWhenLoggedOut);
+
+    // Push the new factory onto the $http interceptor array
+    $httpProvider.interceptors.push('redirectWhenLoggedOut');
+
+    $authProvider.loginUrl = '/api/authenticate';
 
     $urlRouterProvider.otherwise("/");
 
@@ -85,7 +176,20 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider){
             controller: 'AuthCtrl as vm',
             data: { pageTitle: 'Login', specialClass: 'gray-bg'}
         })
+        // Administrator
 
+        .state('admin', {
+            abstract: true,
+            url: '/admin',
+            templateUrl: 'partials/common/content.html',
+            data: { requireLogin: true }
+        })
+
+        .state('admin.queue', {
+            url: '/queue',
+            templateUrl: 'partials/admin/queue/index.html',
+            data: { pageTitle: 'Controle de Senhas' }
+        })
 
 }
 
@@ -93,8 +197,59 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider){
 angular
     .module('nQueue')
     .config(config)
-    .run(function($rootScope, $state, amMoment){
+    .run(function($rootScope, $state, $timeout, amMoment){
+
         $rootScope.$state = $state;
+
+        $rootScope.$on('$stateChangeStart', function(event, toState) {
+
+            // Grab the user from local storage and parse it to an object
+            var user = JSON.parse(localStorage.getItem('user'));
+
+            // If there is any user data in local storage then the user is quite
+            // likely authenticated. If their token is expired, or if they are
+            // otherwise not actually authenticated, they will be redirected to
+            // the auth state because of the rejected request anyway
+            if(user) {
+
+                // The user's authenticated state gets flipped to
+                // true so we can now show parts of the UI that rely
+                // on the user being logged in
+                $rootScope.authenticated = true;
+
+                // Putting the user's data on $rootScope allows
+                // us to access it anywhere across the app. Here
+                // we are grabbing what is in local storage
+                $rootScope.currentUser = user;
+
+                // If the user is logged in and we hit the auth route we don't need
+                // to stay there and can send the user to the main state
+                if(toState.name === "auth") {
+
+                    // Preventing the default behavior allows us to use $state.go
+                    // to change states
+                    event.preventDefault();
+
+                    // go to the "main" state which in our case is users
+                    $state.go('users');
+                }
+            }
+
+            var requireLogin = toState.data.requireLogin;
+            $timeout(function(){
+                if(requireLogin && !$rootScope.authenticated){
+                    $state.go('auth');
+                }
+            }, 0);
+
+            // Check your Access
+            var access = toState.data.access;
+            if(access && ($rootScope.currentUser.access < access)){
+                // Redirect to Dashboard
+                $state.go('admin.queue');
+                event.preventDefault();
+            }
+        });
 
         // MomentJS locale text in Portugues.
         amMoment.changeLocale('pt-br');
@@ -407,35 +562,138 @@ angular
  * Controllers AngularJS
  */
 function MainCtrl($scope){
-    $scope.teste = 'Testando';
-}
-
-function AuthCtrl(){
 
 }
 
-function HomeCtrl($scope, QueueModel){
+/**
+ * Authenticate Controller
+ * @param $auth
+ * @param $state
+ * @param $http
+ * @param $rootScope
+ * @constructor
+ */
+function AuthCtrl($auth, $state, $http, $scope, $rootScope){
 
     var vm = this;
 
+    $scope.loginError   = false;
+    $scope.loginErrorText = "";
+
+    vm.login = function(login){
+        var credentials = {
+            username: login.username,
+            password: login.password
+        }
+        $auth.login(credentials).then(function(){
+                return $http.get('/api/authenticate/user')
+            }, function(response){
+            $scope.loginError = true;
+                if(response.status===422){
+                    $scope.isErrorType = 1;
+                    $scope.loginErrorText = response.data.username[0];
+                }else if(response.status == 401 && (response.data.error = "invalid_credentials")){
+                    $scope.isErrorType = 2;
+                    $scope.loginErrorText = "Sua senha está incorreta";
+                }
+
+            })
+            .then(function(response){
+                // Stringify the returned data to prepare it
+                // to go into local storage
+                var user = JSON.stringify(response.data.user);
+
+                // Set the stringified user data into local storage
+                localStorage.setItem('user', user);
+
+                // The user's authenticated state gets flipped to
+                // true so we can now show parts of the UI that rely
+                // on the user being logged in
+                $rootScope.authenticated = true;
+
+                // Putting the user's data on $rootScope allows
+                // us to access it anywhere across the app
+                $rootScope.currentUser = response.data.user;
+
+                // Everything worked out so we can now redirect to
+                // the users state to view the data
+                $state.go('admin.queue');
+            })
+    }
+
+}
+
+/**
+ * Profile User
+ * @param $http
+ * @param $auth
+ * @param $rootScope
+ * @constructor
+ */
+function ProfileCtrl($http, $auth, $rootScope, $state){
+    var vm = this;
+
+    vm.logout = function() {
+        $auth.logout().then(function() {
+            // Remove the authenticated user from local storage
+            localStorage.removeItem('user');
+            // Flip authenticated to false so that we no longer
+            // show UI elements dependant on the user being logged in
+            $rootScope.authenticated = false;
+            // Remove the current user info from rootscope
+            $rootScope.currentUser = null;
+
+            $state.go('auth', {})
+        });
+    }
+}
+
+/**
+ *
+ * @param $scope
+ * @param QueueModel
+ * @param socket
+ * @constructor
+ */
+function HomeCtrl($scope, QueueModel, socket){
+    /**
+     * VM / SELF
+     */
+    var vm      = this,
+        self    = $scope;
+    /**
+     * Desabilitar botão
+     * @type {boolean}
+     * @private
+     */
+    self._waitPrinter = false;
+    /**
+     * Lista de Atendimentos
+     * @type {Array}
+     */
     $scope.list = [];
+    /**
+     * Carregar Atendimentos pelo Factory
+     */
     QueueModel
         .listToQueue()
         .success(function(data){
             $scope.list = data;
         });
-
-
+    /**
+     * Requisitar uma Senha.
+     * @param $queue
+     */
     vm.getQueue = function($queue){
+        self._waitPrinter = true;
         QueueModel.
             addInQueue($queue)
             .success(function(data){
-                //socket.emit("add:Queue", data);
+                socket.emit("add:Queue", data);
                 self._waitPrinter = false;
-        })
-
+                console.log(self._waitPrinter);
+        });
     };
-
     /**
      * Get Date Totem
      * @returns {string}
@@ -455,7 +713,6 @@ function HomeCtrl($scope, QueueModel){
         var today = dd+'/'+mm+'/'+yyyy;
         return today;
     };
-
     /**
      * Reload Page
      */
@@ -464,10 +721,159 @@ function HomeCtrl($scope, QueueModel){
     };
 }
 
+function DashCtrl($scope, $rootScope, QueueApi, socket){
+    var self    = $scope,
+        vm      = this;
+
+    self._step = 1;
+    /**
+     * Fila de Atendimento
+     */
+    self._inQueue = [];
+
+    socket.on("in:Queue", function(data){
+        self._inQueue.push(data);
+    });
+
+    self.$watchCollection('_inQueue', function(){
+        self._normal = 0;
+        self._preferencial = 0;
+        self._mensalista = 0;
+        angular.forEach(self._inQueue, function(value, key){
+            if(value.atendimento_id==1){
+                self._normal+=1;
+            }else if(value.atendimento_id==2){
+                self._preferencial+=1;
+            }else if(value.atendimento_id==3){
+                self._mensalista+=1;
+            }
+        })
+    });
+
+    self._loadQueue = function(){
+        QueueApi
+            .inQueue()
+            .success(function(data){
+                self._inQueue = data;
+            })
+    };
+    self._loadQueue();
+    // End Fila de Atendimento
+
+    /**
+     * Area to Calling Queue in TV
+     */
+    self._inCallingWait = null;
+
+    vm.callQueue = function(atendimento){
+        self._step = 2;
+        // Pegando Usuário Logado
+        var _user = $rootScope.currentUser.id;
+        // Localizando Proximo na Fila
+        var _update = vm.findAttend(self._inQueue, atendimento);
+        // Pegando Index
+        var _index = self._inQueue.indexOf(_update);
+        // Enviar Para TV
+        QueueApi
+            .call({ id: _update.id, user_id: _user })
+            .success(function(data){
+                self._inCallingWait = data.id;
+                socket.emit("call:Queue", data);
+                self._inQueue.splice(_index, 1);
+            });
+    }
+
+    /**
+     * Status do Atendimento
+     */
+    self._saveCalling;
+
+    self.showButtonsCancel = false;
+    /**
+     * Chamar Novamente
+     * @param id
+     */
+    vm.novamente = function(id){
+        QueueApi
+            .again({id: id})
+            .success(function(data){
+                socket.emit("call:Queue", data);
+            });
+    };
+
+    /**
+     * Em Atendimento
+     * @param id
+     */
+    vm.atendimento = function(id){
+        self._step = 3;
+        QueueApi
+            .status(id, {status_id: 3})
+            .success(function(data){
+                console.log("Atendimento: ");
+            });
+    };
+
+    /**
+     * Atendimento Finalizado
+     * @param id
+     */
+    vm.finalizado = function(id){
+        self._step = 1;
+        QueueApi
+            .status(id, {status_id: 4})
+            .success(function(data){
+                console.log("Finalizado: ");
+            });
+    }
+    /**
+     * Desistiu do Atendimento
+     * @param id
+     */
+    vm.desistiu = function(id){
+        self._step = 1;
+        QueueApi
+            .status(id, {status_id: 5})
+            .success(function(data){
+                console.log("Desistiu: ");
+            });
+
+    };
+    /**
+     * Nao Compareceu ao Guichê
+     */
+    vm.naocompareceu = function(id){
+        self._step = 1;
+        QueueApi
+            .status(id, {status_id: 6})
+            .success(function(data){
+                console.log("Não Compareceu: ");
+            });
+
+    }
+
+    /**
+     * Removendo da Fila da Atendimento
+     * @param _inQueue
+     * @param atendimento
+     * @returns {*}
+     */
+    vm.findAttend = function(_inQueue, atendimento){
+        for(var i=0; i < _inQueue.length; i++){
+            if(_inQueue[i].atendimento_id == atendimento){
+                return _inQueue[i]
+            }
+        }
+    };
+
+}
+
 angular
     .module('nQueue')
     .controller('MainCtrl', MainCtrl)
     .controller('AuthCtrl', AuthCtrl)
+    .controller('ProfileCtrl', ProfileCtrl)
     .controller('HomeCtrl', HomeCtrl)
+    .controller('DashCtrl', DashCtrl)
 ;
 //# sourceMappingURL=nQueue.js.map

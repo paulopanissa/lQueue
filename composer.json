@@ -7,8 +7,10 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
+        "tymon/jwt-auth": "0.5.*",
         "hoa/websocket": "~3.0",
-        "predis/predis": "^1.0"
+        "predis/predis": "^1.0",
+        "doctrine/dbal": "^2.5"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

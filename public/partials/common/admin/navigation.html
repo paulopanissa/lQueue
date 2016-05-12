@@ -10,10 +10,10 @@
                                 <span class="block m-t-xs">
                                     <strong class="font-bold">{{ currentUser.name }}</strong>
                              </span>
-                                <span class="text-muted text-xs block">{{ currentUser.role }} <b class="caret"></b></span>
+                                <span class="text-muted text-xs block">{{ currentUser.office }} <b class="caret"></b></span>
                             </span>
                     </a>
-                    <ul class="dropdown-menu animated fadeInRight m-t-xs" ng-controller="UserController as vm">
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs" ng-controller="ProfileCtrl as vm">
                         <li>
                             <a ui-sref="user.profile">Perfil</a>
                         </li>
@@ -29,8 +29,8 @@
                     nQ+
                 </div>
             </li>
-            <li ng-class="{active: $state.includes('dash.index')}">
-                <a ui-sref="dash.index"><i class="fa fa-diamond"></i> <span class="nav-label">Dashboard</span> </a>
+            <li ng-class="{active: $state.includes('admin.queue')}">
+                <a ui-sref="dash.index"><i class="fa fa-diamond"></i> <span class="nav-label">Fila de Espera</span> </a>
             </li>
 
 

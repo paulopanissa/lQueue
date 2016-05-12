@@ -43,7 +43,7 @@
             <div class="col-lg-12">
                 <button class="btn btn-block btn-queue"
                         ng-class="item.btn"
-                        ng-click="vm.getQueue(item.id); _waitPrinter = true"
+                        ng-click="vm.getQueue(item.id)"
                         ng-disabled="_waitPrinter">
                     <i class="fa"
                        ng-class="item.icon"style="margin-right: 10px"></i> {{ item.name }}

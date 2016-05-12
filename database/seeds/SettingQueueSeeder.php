@@ -14,15 +14,21 @@ class SettingQueueSeeder extends Seeder
     {
         SettingQueue::create([
             'key' => 'N',
-            'name' => 'ATENDIMENTO NORMAL'
+            'name' => 'ATENDIMENTO NORMAL',
+            'btn' => 'btn-primary',
+            'icon' => 'fa-check'
         ]);
         SettingQueue::create([
             'key' => 'M',
-            'name' => 'ATENDIMENTO MENSALISTA'
+            'name' => 'ATENDIMENTO MENSALISTA',
+            'btn' => 'btn-success',
+            'icon' => 'fa-briefcase'
         ]);
         SettingQueue::create([
             'key' => 'P',
-            'name' => 'ATENDIMENTO PREFERENCIAL'
+            'name' => 'ATENDIMENTO PREFERENCIAL',
+            'btn' => 'btn-danger',
+            'icon' => 'fa-wheelchair'
         ]);
     }
 }

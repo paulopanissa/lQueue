@@ -26,6 +26,9 @@
 <script src="{!! asset('vendor/moment/locale/pt-br.js') !!}"></script>
 <script src="{!! asset('assets/js/nqueue.js') !!}"></script>
 
+<!-- Server -->
+<script src="//192.168.10.10:3000/socket.io/socket.io.js"></script>
+
 <!-- [AngularJS] -->
 <script src="{!! asset('vendor/angular/angular.min.js') !!}"></script>
 <script src="{{ asset('vendor/oclazyload/dist/ocLazyLoad.min.js') }}"></script>
