@@ -17,7 +17,7 @@ class CreateQueueManagersTable extends Migration
             $table->string('pwd');
             $table->integer('queue_id')->unsigned();
             $table->integer('status_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->integer('user_id')->unsigned()->nullable();
             $table->timestamps();
             $table->foreign('queue_id')->references('id')->on('setting_queues');
             $table->foreign('status_id')->references('id')->on('setting_statuses');
