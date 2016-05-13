@@ -37,6 +37,7 @@ class HomeController extends Controller
         $toSave = [
             'id' => $inQueue->id,
             'pwd' => $inQueue->pwd,
+            'queue_id' => $inQueue->queue_id,
             'queue' => $inQueue->queue->name,
             'created_at' => $inQueue->created_at,
         ];

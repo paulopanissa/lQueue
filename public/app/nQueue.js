@@ -30,9 +30,9 @@ angular
      * @param socketFactory
      * @returns {*}
      */
-    function socket(socketFactory){
+    function socket(socketFactory, SOCKET){
         var mySocket = socketFactory({
-            ioSocket: io.connect('//192.168.10.10:3000')
+            ioSocket: io.connect('//'+SOCKET+':3000')
         });
         return mySocket;
     }
@@ -689,9 +689,9 @@ function HomeCtrl($scope, QueueModel, socket){
         QueueModel.
             addInQueue($queue)
             .success(function(data){
+                console.log(data);
                 socket.emit("add:Queue", data);
                 self._waitPrinter = false;
-                console.log(self._waitPrinter);
         });
     };
     /**
@@ -742,6 +742,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
      * Via socket.io
      */
     socket.on("in:Queue", function(data){
+        console.log(data);
         self._inQueue.push(data);
     });
 

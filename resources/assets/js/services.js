@@ -15,9 +15,9 @@ angular
      * @param socketFactory
      * @returns {*}
      */
-    function socket(socketFactory){
+    function socket(socketFactory, SOCKET){
         var mySocket = socketFactory({
-            ioSocket: io.connect('//192.168.10.10:3000')
+            ioSocket: io.connect('//'+SOCKET+':3000')
         });
         return mySocket;
     }

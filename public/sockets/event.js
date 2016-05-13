@@ -10,11 +10,17 @@ module.exports = function(io){
                 atendimento: data.queue,
                 datetime: data.created_at.date
             };
-            console.log(_return);
             // Mandar dados para impressora
             sockets.emit('for:Print', _return);
             // Mandar dados para Usuário do Sistema
-            sockets.emit('in:Queue', data);
+
+            var _inQueue = {
+                id: data.id,
+                pwd: data.pwd,
+                queue_id: data.queue_id,
+                created_at: data.created_at.date
+            }
+            sockets.emit('in:Queue', _inQueue);
         });
 
 

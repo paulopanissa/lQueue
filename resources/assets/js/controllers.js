@@ -129,9 +129,9 @@ function HomeCtrl($scope, QueueModel, socket){
         QueueModel.
             addInQueue($queue)
             .success(function(data){
+                console.log(data);
                 socket.emit("add:Queue", data);
                 self._waitPrinter = false;
-                console.log(self._waitPrinter);
         });
     };
     /**
@@ -182,6 +182,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
      * Via socket.io
      */
     socket.on("in:Queue", function(data){
+        console.log(data);
         self._inQueue.push(data);
     });
 
