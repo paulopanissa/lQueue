@@ -7,8 +7,8 @@ module.exports = function(io){
         socket.on("add:Queue", function(data){
             var _return = {
                 senha: data.pwd,
-                atendimento: data.queue,
-                datetime: configDateTOCSharp(data.created_at.date)
+                atendimento: configAtendimentoToCsharp(data.queue),
+                datetime: configDateToCSharp(data.created_at.date)
             };
             console.log(_return)
             // Mandar dados para impressora
@@ -26,7 +26,16 @@ module.exports = function(io){
     });
 };
 
-function configDateTOCSharp(str){
+function configDateToCSharp(str){
     var value = str.split('.');
     return value[0];
+}
+
+function configAtendimentoToCsharp(str){
+    var value = str.split(" ");
+    if(value[1]){
+        return value[1];
+    }else{
+        return value;
+    }
 }
