@@ -8,8 +8,9 @@ module.exports = function(io){
             var _return = {
                 senha: data.pwd,
                 atendimento: data.queue,
-                datetime: data.created_at.date
+                datetime: convertTimeZone(data.created_at.date)
             };
+            console.log(_return)
             // Mandar dados para impressora
             sockets.emit('for:Print', _return);
             // Mandar dados para Usuário do Sistema
@@ -22,9 +23,14 @@ module.exports = function(io){
             }
             sockets.emit('in:Queue', _inQueue);
         });
-
-
-
     });
-
 };
+/**
+ * Convert TZ
+ * @param value
+ * @returns {*}
+ */
+function convertTimeZone(value){
+    var moment = require('moment-timezone');
+    return moment.tz(value, "America/Campo_Grande").format();
+}
