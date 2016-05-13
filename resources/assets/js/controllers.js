@@ -161,62 +161,91 @@ function HomeCtrl($scope, QueueModel, socket){
     };
 }
 
-function DashCtrl($scope, $rootScope, QueueApi, socket){
+function QueueCtrl($scope, $rootScope, QueueApi, socket){
     var self    = $scope,
         vm      = this;
 
+    /**
+     * Step for Change
+     * @type {number}
+     * @private
+     */
     self._step = 1;
+
     /**
      * Fila de Atendimento
      */
     self._inQueue = [];
 
+    /**
+     * Adicionar a fila de todos
+     * Via socket.io
+     */
     socket.on("in:Queue", function(data){
         self._inQueue.push(data);
     });
 
+    /**
+     * Carregando Contado nos Botoes
+     */
     self.$watchCollection('_inQueue', function(){
         self._normal = 0;
         self._preferencial = 0;
         self._mensalista = 0;
         angular.forEach(self._inQueue, function(value, key){
-            if(value.atendimento_id==1){
+            if(value.queue_id==1){
                 self._normal+=1;
-            }else if(value.atendimento_id==2){
+            }else if(value.queue_id==2){
                 self._preferencial+=1;
-            }else if(value.atendimento_id==3){
+            }else if(value.queue_id==3){
                 self._mensalista+=1;
             }
         })
     });
 
+    /**
+     * Carregando os Atendimentos do Banco de Dados
+     * @private
+     */
     self._loadQueue = function(){
         QueueApi
             .inQueue()
             .success(function(data){
+                console.log(data);
                 self._inQueue = data;
             })
     };
-    self._loadQueue();
-    // End Fila de Atendimento
 
+    /**
+     * Inicializar
+     */
+    self._loadQueue();
+
+    
     /**
      * Area to Calling Queue in TV
      */
     self._inCallingWait = null;
 
+    // Chamar Nova Senha;
     vm.callQueue = function(atendimento){
+
         self._step = 2;
+        
         // Pegando Usuário Logado
         var _user = $rootScope.currentUser.id;
+
         // Localizando Proximo na Fila
         var _update = vm.findAttend(self._inQueue, atendimento);
+
         // Pegando Index
         var _index = self._inQueue.indexOf(_update);
+        
         // Enviar Para TV
         QueueApi
             .call({ id: _update.id, user_id: _user })
             .success(function(data){
+                console.log(data);
                 self._inCallingWait = data.id;
                 socket.emit("call:Queue", data);
                 self._inQueue.splice(_index, 1);
@@ -226,6 +255,7 @@ function DashCtrl($scope, $rootScope, QueueApi, socket){
     /**
      * Status do Atendimento
      */
+
     self._saveCalling;
 
     self.showButtonsCancel = false;
@@ -300,7 +330,7 @@ function DashCtrl($scope, $rootScope, QueueApi, socket){
      */
     vm.findAttend = function(_inQueue, atendimento){
         for(var i=0; i < _inQueue.length; i++){
-            if(_inQueue[i].atendimento_id == atendimento){
+            if(_inQueue[i].queue_id == atendimento){
                 return _inQueue[i]
             }
         }
@@ -314,5 +344,4 @@ angular
     .controller('AuthCtrl', AuthCtrl)
     .controller('ProfileCtrl', ProfileCtrl)
     .controller('HomeCtrl', HomeCtrl)
-    .controller('DashCtrl', DashCtrl)
-;
+    .controller('QueueCtrl', QueueCtrl);

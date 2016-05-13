@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Queue\QueueManager;
 use App\Repositories\QueueRepository;
 use Illuminate\Http\Request;
 
@@ -20,20 +19,18 @@ class QueueController extends Controller
         return $this->queueRepository->inQueue();
     }
 
-    public function putCallQueue($id){
-        $update = $this->queueRepository->find($id);
-        $update->status_id = 2;
-        $update->save();
-
+    public function postCallQueue(Request $request){
+        return $this->queueRepository->callQueue($request->input('id'), $request->input('user_id'));
 
     }
 
-    public function putCallQueueAgain($id){
-
+    public function postCallQueueAgain(Request $request){
+        return $this->queueRepository->callQueue($request->input('id'));
     }
 
-    public function putUpdateQueue($id, $status){
-
+    public function putUpdateQueue(Request $request, $id){
+        dd($request->all());
+        return $this->queueRepository->changeStatus($id, $request->input('status'));
     }
 
 }

@@ -59,16 +59,16 @@ angular
     function QueueApi($http) {
         return {
             inQueue: function () {
-                $http.get('/api/v1/queue');
+                return $http.get('/api/queue');
             },
-            call: function ($id) {
-
+            call: function ($data) {
+                return $http.post('/api/queue/call', $data);
             },
-            again: function ($id) {
-
+            again: function ($data) {
+                return $http.post('/api/queue/again', $data);
             },
             status: function ($id, $status) {
-
+                return $http.put('/api/queue/status/' + $id, { status: $status });
             }
         }
     }

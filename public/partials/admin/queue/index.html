@@ -1,3 +1,129 @@
-<div>
-    Leroooy
+<div class="wrapper wrapper-content animated fadeIn"
+     ng-controller="QueueCtrl as vm">
+
+    <div class="row m-b">
+        <div class="col-md-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>FILA DE ATENDIMENTO ({{ _inQueue.length }})</h5>
+                    <div class="pull-right">
+                        <button class="btn btn-xs btn-danger"
+                                onclick="location.reload();">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <!-- Step 1 -->
+                    <div class="row"
+                         ng-show="_step==1">
+                        <div class="col-md-4 m-b">
+                            <button class="btn btn-success btn-block"
+                                    ng-click="vm.callQueue(1);"
+                                    ng-disabled="_normal==0">
+                                ATENDIMENTO NORMAL - ({{ _normal  }})
+                            </button>
+                        </div>
+                        <div class="col-md-4 m-b">
+                            <button class="btn btn-danger btn-block"
+                                    ng-click="vm.callQueue(3);"
+                                    ng-disabled="_preferencial==0">
+                                ATENDIMENTO PREFERENCIAL - ({{ _preferencial }})
+                            </button>
+                        </div>
+                        <div class="col-md-4 m-b">
+                            <button class="btn btn-info btn-block"
+                                    ng-click="vm.callQueue(2);"
+                                    ng-disabled="_mensalista==0">
+                                ATENDIMENTO MENSALISTA - ({{ _mensalista }})
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="row"
+                         ng-show="_step==2">
+                        <div class="col-md-4 m-b">
+                            <button class="btn btn-primary btn-block"
+                                    ng-click="vm.novamente(_inCallingWait);"> Chamar Novamente</button>
+                        </div>
+                        <div class="col-md-4 m-b">
+                            <button class="btn btn-info btn-block"
+                                    ng-click="vm.atendimento(_inCallingWait);"> Em Atendimento</button>
+                        </div>
+                        <div class="col-md-4 m-b">
+                            <button class="btn btn-danger btn-block"
+                                    ng-click="_step=4">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="row" ng-show="_step==3">
+                        <div class="col-md-6 m-b">
+                            <button class="btn btn-success btn-block"
+                                    ng-click="vm.finalizado(_inCallingWait)">
+                                Atendimento Concluído
+                            </button>
+                        </div>
+
+                        <div class="col-md-6 m-b">
+                            <button class="btn btn-danger btn-block"
+                                    ng-click="_step=4">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="row" ng-show="_step==4">
+                        <div class="col-md-6 m-b">
+                            <button class="btn btn-danger btn-block"
+                                    ng-click="vm.desistiu(_inCallingWait)">
+                                Desistiu
+                            </button>
+                        </div>
+                        <div class="col-md-6 m-b">
+                            <button class="btn btn-danger btn-block"
+                                    ng-click="vm.naocompareceu(_inCallingWait)">
+                                Não compareceu
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>TEMPO DE ESPERA DAS FILAS</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="table table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Senha</th>
+                                <th>Atendimento</th>
+                                <th>Aguardando</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in _inQueue"
+                                ng-class="{'danger': item.queue_id==2, 'info': item.queue_id==3}">
+                                <td>{{ item.pwd }}</td>
+                                <td>{{ item.queue_id | attend }}</td>
+                                <td><time am-time-ago="item.created_at" title="{{ item.created_at | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

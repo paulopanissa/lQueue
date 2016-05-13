@@ -38,7 +38,7 @@ class QueueManager extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function queue(){
-        return $this->belongsTO('App\Models\Setting\SettingQueue');
+        return $this->belongsTo('App\Models\Setting\SettingQueue');
     }
 
     /**

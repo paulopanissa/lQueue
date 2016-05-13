@@ -58,4 +58,29 @@ class QueueRepository {
     public function inQueue(){
         return $this->queueManager->inQueue();
     }
+    
+    public function callQueue($id, $user = null){
+        $queue = $this->findQueue($id);
+        $queue->status_id = 2;
+        $queue->user_id = ($user!=null) ? $user : $queue->user_id;
+        if($queue->save()){
+            $user = $queue->user()->first();
+            $guiche = $user->tickets()->first();
+            $doQueue = $queue->queue()->first();
+            $toSend = [
+              'id' => $queue->id,
+              'senha' => $queue->pwd,
+              'guiche' => $guiche->number,
+              'atendimento' => $doQueue->name
+            ];
+            return $toSend;
+        }
+        
+    }
+    
+    public function changeStatus($id, $status){
+        $queue = $this->findQueue($id);
+        $queue->status_id = $status;
+        return $queue->save();
+    }
 }
