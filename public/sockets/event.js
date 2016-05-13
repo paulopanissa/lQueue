@@ -27,7 +27,6 @@ module.exports = function(io){
 };
 
 function configDateTOCSharp(str){
-    var moment = require('moment-timezone');
     var value = str.split('.');
-    return moment.tz(value[0], "America/Campo_Grande").format();
+    return value[0];
 }
