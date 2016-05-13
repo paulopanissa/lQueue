@@ -29,8 +29,9 @@ class QueueController extends Controller
     }
 
     public function putUpdateQueue(Request $request, $id){
-        dd($request->all());
-        return $this->queueRepository->changeStatus($id, $request->input('status'));
+        if($this->queueRepository->changeStatus($id, $request->input('status'))){
+            return true;
+        }
     }
 
 }
