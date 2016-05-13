@@ -8,7 +8,7 @@ module.exports = function(io){
             var _return = {
                 senha: data.pwd,
                 atendimento: data.queue,
-                datetime: convertTimeZone(data.created_at.date)
+                datetime: configDateTOCSharp(data.created_at.date)
             };
             console.log(_return)
             // Mandar dados para impressora
@@ -25,12 +25,9 @@ module.exports = function(io){
         });
     });
 };
-/**
- * Convert TZ
- * @param value
- * @returns {*}
- */
-function convertTimeZone(value){
+
+function configDateTOCSharp(str){
     var moment = require('moment-timezone');
-    return moment.tz(value, "America/Campo_Grande").format();
+    var value = str.split('.');
+    return moment.tz(value[0], "America/Campo_Grande").format();
 }
