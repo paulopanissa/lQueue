@@ -85,9 +85,28 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
         .state('admin.queue', {
             url: '/queue',
             templateUrl: 'partials/admin/queue/index.html',
-            data: { pageTitle: 'Controle de Senhas' }
+            data: { pageTitle: 'Controle de Senhas', requireLogin: true }
         })
 
+        .state('admin.users', {
+            url: '/users',
+            templateUrl: 'partials/admin/users/index.html',
+            data: { pageTitle: 'Usuários', requireLogin: true }
+        })
+
+        .state('admin.users-create', {
+            url: '/users/create',
+            templateUrl: 'partials/admin/users/create.html',
+            controller: "UsersNewCtrl as vm",
+            data: { pageTitle: 'Adicione um novo usuário', requireLogin: true }
+        })
+
+        .state('admin.users-edit', {
+            url: '/users/{id}/edit',
+            templateUrl: 'partials/admin/users/edit.html',
+            controller: "UsersEditCtrl as vm",
+            data: { pageTitle: 'Editar Usuário', requireLogin: true }
+        })
 }
 
 
@@ -126,9 +145,8 @@ angular
                     // Preventing the default behavior allows us to use $state.go
                     // to change states
                     event.preventDefault();
-
                     // go to the "main" state which in our case is users
-                    $state.go('users');
+                    $state.go('admin.queue');
                 }
             }
 

@@ -1,0 +1,70 @@
+<div class="wrapper wrapper-content animated fadeIn">
+
+    <div class="row m-b">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>
+                        Novo Usuário
+                        <small>Cadastre com cuidado</small>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="m-t-none m-b">Cadastre</h3>
+                            <form ng-submit="vm.create(form)">
+                                <div class="form-group">
+                                    <label for="username">Usuário: </label>
+                                    <input type="text"
+                                           id="username"
+                                           class="form-control"
+                                           placeholder="nomeusuario"
+                                           ng-model="form.username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Nome: </label>
+                                    <input type="text"
+                                           id="name"
+                                           class="form-control"
+                                           placeholder="Nome / Sobrenome"
+                                           ng-model="form.name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="office">Cargo: </label>
+                                    <input type="text"
+                                           id="office"
+                                           class="form-control"
+                                           placeholder="Auxiliar de Cartório"
+                                           ng-model="form.office">
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Senha: </label>
+                                    <input type="password"
+                                           id="password"
+                                           class="form-control"
+                                           placeholder="••••••••"
+                                           ng-model="form.password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="permission">Permissão: </label>
+                                    <select id="permission"
+                                            class="form-control"
+                                            ng-options="item.id as item.name for item in items"
+                                            ng-model="form.access"></select>
+                                </div>
+                                <div class="clearfix pull-right m-t">
+                                    <button class="btn btn-outline btn-info">
+                                        <i class="fa fa-save"></i> Salvar
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

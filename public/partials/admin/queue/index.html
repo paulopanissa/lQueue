@@ -114,7 +114,7 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="item in _inQueue"
-                                ng-class="{'danger': item.queue_id==2, 'info': item.queue_id==3}">
+                                ng-class="{'danger': item.queue_id==3, 'info': item.queue_id==2}">
                                 <td>{{ item.pwd }}</td>
                                 <td>{{ item.queue_id | attend }}</td>
                                 <td><time am-time-ago="item.created_at" title="{{ item.created_at | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time></td>

@@ -30,26 +30,11 @@
                 </div>
             </li>
             <li ng-class="{active: $state.includes('admin.queue')}">
-                <a ui-sref="dash.index"><i class="fa fa-diamond"></i> <span class="nav-label">Fila de Espera</span> </a>
+                <a ui-sref="admin.queue"><i class="fa fa-diamond"></i> <span class="nav-label">Fila de Espera</span></a>
             </li>
 
-
-            <li ng-if="currentUser.access >= 5" ng-class="{active: $state.includes('reports')}">
-                <a href=""><i class="fa fa-bar-chart"></i> <span class="nav-label">Relatório</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-class="{in: $state.includes('reports')}">
-                    <li ui-sref-active="active"><a ui-sref="reports.index">Relatórios</a></li>
-                    <li ui-sref-active="active"><a ui-sref="reports.atendimento">Atendimento</a></li>
-                    <li ui-sref-active="active"><a ui-sref="reports.usuario">Usuários</a></li>
-                </ul>
-            </li>
-
-
-            <li ng-if="currentUser.access >= 5" ng-class="{active: $state.includes('users')}">
-                <a href=""><i class="fa fa-wrench"></i> <span class="nav-label">Usuários</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level" ng-class="{in: $state.includes('users')}">
-                    <li ui-sref-active="active"><a ui-sref="users.index">Todos</a></li>
-                    <li ui-sref-active="active"><a ui-sref="users.novo">Novo</a></li>
-
+            <li ng-if="currentUser.access >= 10" ng-class="{active: $state.includes('admin.users')}">
+                <a ui-sref="admin.users"><i class="fa fa-users"></i> <span class="nav-label">Usuários</span></a>
                 </ul>
             </li>
 

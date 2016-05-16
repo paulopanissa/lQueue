@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Repositories\QueueRepository;
+use App\WebServer;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -10,9 +11,14 @@ use App\Http\Controllers\Controller;
 
 class QueueController extends Controller
 {
+
     protected $queueRepository;
-    public function __construct(QueueRepository $repository){
+
+    protected $websocket;
+
+    public function __construct(QueueRepository $repository, WebServer $webServer){
         $this->queueRepository = $repository;
+        $this->websocket = $webServer;
     }
 
     public function getInQueue(){
@@ -20,18 +26,22 @@ class QueueController extends Controller
     }
 
     public function postCallQueue(Request $request){
-        return $this->queueRepository->callQueue($request->input('id'), $request->input('user_id'));
+        $callQueue = $this->queueRepository->callQueue($request->input('id'), $request->input('user_id'));
+        $this->websocket->doSend($callQueue);
+        return response()->json($callQueue);
 
     }
-
     public function postCallQueueAgain(Request $request){
-        return $this->queueRepository->callQueue($request->input('id'));
+        $callQueue = $this->queueRepository->callQueue($request->input('id'));
+        $this->websocket->doSend($callQueue);
+        return response()->json($callQueue);
     }
 
     public function putUpdateQueue(Request $request, $id){
-        if($this->queueRepository->changeStatus($id, $request->input('status'))){
-            return true;
+        if($this->queueRepository->changeStatus($id, $request->input('status_id'))){
+            return response()->json(['error' => false]);
         }
+        return response()->json(['error' => true]);
     }
 
 }

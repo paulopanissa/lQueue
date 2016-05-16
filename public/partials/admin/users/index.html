@@ -1,0 +1,60 @@
+<div class="wrapper wrapper-content animated fadeIn"
+     ng-controller="UsersCtrl as vm">
+
+    <div class="row m-b">
+        <div class="col-md-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Usuários</h5>
+                    <div class="pull-right">
+                        <a ui-sref="admin.users-create" class="btn btn-xs btn-info">
+                            <i class="fa fa-plus"></i> Novo Usuário
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="hidden-xs">ID</th>
+                                    <th>Nome</th>
+                                    <th class="hidden-xs">Cargo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="user in users">
+                                    <td class="hidden-xs">{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td class="hidden-xs">{{ user.office }}</td>
+                                    <td>
+                                        <div class="text-right">
+                                            <button ui-sref="admin.users-edit({id: user.id})"
+                                                    class="btn btn-outline btn-warning btn-xs"><i
+                                                    class="fa fa-edit"></i></button>
+                                            <button class="btn btn-outline btn-danger btn-xs"><i
+                                                    class="fa fa-times"></i></button>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row m-t">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <button class="btn btn-success btn-block"
+                            ng-click="vm.loadMore()"
+                            ng-hide="!nextPage"
+                            ng-disabled="!nextPage"><i class="fa fa-refresh fa-spin fa-fw"></i>
+                                <span class="sr-only">Loading...</span> Carregar...
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -20,7 +20,8 @@ module.exports = function(io){
                 pwd: data.pwd,
                 queue_id: data.queue_id,
                 created_at: data.created_at.date
-            }
+            };
+            console.log(_inQueue);
             sockets.emit('in:Queue', _inQueue);
         });
     });

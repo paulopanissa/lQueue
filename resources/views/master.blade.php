@@ -27,7 +27,7 @@
 <script src="{!! asset('assets/js/nqueue.js') !!}"></script>
 
 <!-- Server -->
-<script src="//{{env('SOCKET_URL')}}:3000/socket.io/socket.io.js"></script>
+<script src="//{{env('SOCKET_URL', '192.168.10.10')}}:3000/socket.io/socket.io.js"></script>
 
 <!-- [AngularJS] -->
 <script src="{!! asset('vendor/angular/angular.min.js') !!}"></script>
@@ -42,6 +42,6 @@
 <script>angular
             .module('nQueue')
             .constant("CSRF_TOKEN", '{!! csrf_token() !!}')
-            .constant("SOCKET", '{!! env('SOCKET_URL') !!}');</script>
+            .constant("SOCKET", '{!! env('SOCKET_URL', '192.168.10.10') !!}');</script>
 </body>
 </html>

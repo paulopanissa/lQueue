@@ -8,6 +8,8 @@ angular
     .factory('Login', Login)
     .factory('QueueModel', QueueModel)
     .factory('QueueApi', QueueApi)
+    .factory('UsersApi', UsersApi)
+    .factory('Setting', Setting)
     .factory('SessionService', SessionService);
 
     /**
@@ -68,9 +70,37 @@ angular
                 return $http.post('/api/queue/again', $data);
             },
             status: function ($id, $status) {
-                return $http.put('/api/queue/status/' + $id, { status: $status });
+                return $http.put('/api/queue/status/' + $id, $status);
             }
         }
+    }
+
+    function UsersApi($http){
+        return {
+            paginate: function($last){
+                return $http({
+                    url: '/api/users/paginate',
+                    method: "GET",
+                    params: { page: $last }
+                })
+            },
+            store: function(data){
+                return $http.post('/api/users/create', data);
+            },
+            edit: function(id){
+                return $http.get('/api/users/' + id + '/edit');
+            }
+        }
+    }
+
+    function Setting($http){
+        var base = '/api/setting/';
+        return {
+            get: function($url){
+                return $http.get(base + $url);
+            }
+        }
+
     }
 
     function SessionService(){

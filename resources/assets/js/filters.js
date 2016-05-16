@@ -36,9 +36,9 @@ function attend(){
         if(input != undefined){
             if(input==1){
                 return "Normal";
-            }else if(input==2){
-                return "Preferencial";
             }else if(input==3){
+                return "Preferencial";
+            }else if(input==2){
                 return "Mensalista"
             }
         }

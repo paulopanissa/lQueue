@@ -23,6 +23,8 @@ angular
     .factory('Login', Login)
     .factory('QueueModel', QueueModel)
     .factory('QueueApi', QueueApi)
+    .factory('UsersApi', UsersApi)
+    .factory('Setting', Setting)
     .factory('SessionService', SessionService);
 
     /**
@@ -83,9 +85,37 @@ angular
                 return $http.post('/api/queue/again', $data);
             },
             status: function ($id, $status) {
-                return $http.put('/api/queue/status/' + $id, { status: $status });
+                return $http.put('/api/queue/status/' + $id, $status);
             }
         }
+    }
+
+    function UsersApi($http){
+        return {
+            paginate: function($last){
+                return $http({
+                    url: '/api/users/paginate',
+                    method: "GET",
+                    params: { page: $last }
+                })
+            },
+            store: function(data){
+                return $http.post('/api/users/create', data);
+            },
+            edit: function(id){
+                return $http.get('/api/users/' + id + '/edit');
+            }
+        }
+    }
+
+    function Setting($http){
+        var base = '/api/setting/';
+        return {
+            get: function($url){
+                return $http.get(base + $url);
+            }
+        }
+
     }
 
     function SessionService(){
@@ -188,9 +218,28 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
         .state('admin.queue', {
             url: '/queue',
             templateUrl: 'partials/admin/queue/index.html',
-            data: { pageTitle: 'Controle de Senhas' }
+            data: { pageTitle: 'Controle de Senhas', requireLogin: true }
         })
 
+        .state('admin.users', {
+            url: '/users',
+            templateUrl: 'partials/admin/users/index.html',
+            data: { pageTitle: 'Usuários', requireLogin: true }
+        })
+
+        .state('admin.users-create', {
+            url: '/users/create',
+            templateUrl: 'partials/admin/users/create.html',
+            controller: "UsersNewCtrl as vm",
+            data: { pageTitle: 'Adicione um novo usuário', requireLogin: true }
+        })
+
+        .state('admin.users-edit', {
+            url: '/users/{id}/edit',
+            templateUrl: 'partials/admin/users/edit.html',
+            controller: "UsersEditCtrl as vm",
+            data: { pageTitle: 'Editar Usuário', requireLogin: true }
+        })
 }
 
 
@@ -229,9 +278,8 @@ angular
                     // Preventing the default behavior allows us to use $state.go
                     // to change states
                     event.preventDefault();
-
                     // go to the "main" state which in our case is users
-                    $state.go('users');
+                    $state.go('admin.queue');
                 }
             }
 
@@ -544,9 +592,9 @@ function attend(){
         if(input != undefined){
             if(input==1){
                 return "Normal";
-            }else if(input==2){
-                return "Preferencial";
             }else if(input==3){
+                return "Preferencial";
+            }else if(input==2){
                 return "Mensalista"
             }
         }
@@ -584,7 +632,7 @@ function AuthCtrl($auth, $state, $http, $scope, $rootScope){
         var credentials = {
             username: login.username,
             password: login.password
-        }
+        };
         $auth.login(credentials).then(function(){
                 return $http.get('/api/authenticate/user')
             }, function(response){
@@ -631,6 +679,7 @@ function AuthCtrl($auth, $state, $http, $scope, $rootScope){
  * @constructor
  */
 function ProfileCtrl($http, $auth, $rootScope, $state){
+
     var vm = this;
 
     vm.logout = function() {
@@ -720,6 +769,14 @@ function HomeCtrl($scope, QueueModel, socket){
     };
 }
 
+/**
+ * Queue Manager
+ * @param $scope
+ * @param $rootScope
+ * @param QueueApi
+ * @param socket
+ * @constructor
+ */
 function QueueCtrl($scope, $rootScope, QueueApi, socket){
     var self    = $scope,
         vm      = this;
@@ -741,6 +798,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
      * Via socket.io
      */
     socket.on("in:Queue", function(data){
+        console.log(data);
         self._inQueue.push(data);
     });
 
@@ -754,9 +812,9 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
         angular.forEach(self._inQueue, function(value, key){
             if(value.queue_id==1){
                 self._normal+=1;
-            }else if(value.queue_id==2){
-                self._preferencial+=1;
             }else if(value.queue_id==3){
+                self._preferencial+=1;
+            }else if(value.queue_id==2){
                 self._mensalista+=1;
             }
         })
@@ -796,6 +854,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
 
         // Localizando Proximo na Fila
         var _update = vm.findAttend(self._inQueue, atendimento);
+        console.log(_update);
 
         // Pegando Index
         var _index = self._inQueue.indexOf(_update);
@@ -806,9 +865,10 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
             .success(function(data){
                 self._inCallingWait = data.id;
                 socket.emit("call:Queue", data);
+                socket.emit("remove:Queue", { index: _index, data: data })
                 self._inQueue.splice(_index, 1);
             });
-    }
+    };
 
     /**
      * Status do Atendimento
@@ -896,11 +956,125 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
 
 }
 
+
+function UsersCtrl($scope, $rootScope, UsersApi){
+    var vm = this,
+        self = $scope;
+    
+    self.users = [];
+
+    self.lastpage = 1;
+    /**
+     * Function Init Users
+     */
+    vm.initUsers = function ()
+    {
+        UsersApi
+            .paginate(self.lastpage)
+            .success(function(response){
+                self.nextPage = (response.next_page_url) ? true : false;
+                self.users = response.data;
+                self.currentPage = response.current_page;
+            });
+    };
+    /**
+     * Start Init Users
+     */
+    vm.initUsers();
+
+    vm.loadMore = function()
+    {
+        self.lastpage +=1;
+        UsersApi
+            .paginate(self.lastpage)
+            .success(function(response){
+                self.nextPage = (response.next_page_url) ? true : false;
+                self.users = self.users.concat(response.data);
+            })
+    }
+}
+
+function UsersNewCtrl($scope, $state, UsersApi, Setting){
+
+    var vm = this,
+        self = $scope;
+
+    self.items = [];
+
+    self.form = {};
+
+    self.initAccess = function(){
+        Setting
+            .get('access')
+            .success(function(response){
+                self.items = response;
+                self.form.access = self.items[0].id;
+            })
+    };
+    /**
+     * loadAccess
+     */
+    self.initAccess();
+
+    /**
+     * Criar Usuário
+     * @param form
+     */
+    vm.create = function(form){
+        UsersApi
+            .store(form)
+            .success(function(data){
+                if(data)
+                    $state.go('admin.users')
+            });
+    }
+
+}
+
+function UsersEditCtrl($scope, $rootScope, $stateParams, UsersApi){
+    var vm = this,
+        self = $scope;
+
+    self._id = $stateParams.id;
+
+    self.form = {};
+
+    UsersApi
+        .edit(self._id)
+        .success(function(response){
+            self.form = response;
+        });
+
+
+    vm.edit = function(form){
+        console.log(form);
+    };
+
+    vm.changePassword = function(password){
+        console.log(password);
+    };
+
+    vm.verifyPassword = function (form) {
+        if((form.password == null) || (form.password != form.cpassword)){
+            return true
+        }else {
+            return false;
+        }
+    }
+
+
+
+
+}
+
 angular
     .module('nQueue')
     .controller('MainCtrl', MainCtrl)
     .controller('AuthCtrl', AuthCtrl)
     .controller('ProfileCtrl', ProfileCtrl)
     .controller('HomeCtrl', HomeCtrl)
-    .controller('QueueCtrl', QueueCtrl);
+    .controller('QueueCtrl', QueueCtrl)
+    .controller('UsersCtrl', UsersCtrl)
+    .controller('UsersNewCtrl', UsersNewCtrl)
+    .controller('UsersEditCtrl', UsersEditCtrl);
 //# sourceMappingURL=nQueue.js.map
