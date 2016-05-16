@@ -16,32 +16,35 @@ class QueueController extends Controller
 
     protected $websocket;
 
-    public function __construct(QueueRepository $repository, WebServer $webServer){
+    public function __construct(QueueRepository $repository, WebServer $webServer)
+    {
         $this->queueRepository = $repository;
         $this->websocket = $webServer;
     }
 
-    public function getInQueue(){
+    public function getInQueue()
+    {
         return $this->queueRepository->inQueue();
     }
 
-    public function postCallQueue(Request $request){
+    public function postCallQueue(Request $request)
+    {
         $callQueue = $this->queueRepository->callQueue($request->input('id'), $request->input('user_id'));
-        $this->websocket->doSend($callQueue);
         return response()->json($callQueue);
 
     }
-    public function postCallQueueAgain(Request $request){
+
+    public function postCallQueueAgain(Request $request)
+    {
         $callQueue = $this->queueRepository->callQueue($request->input('id'));
-        $this->websocket->doSend($callQueue);
         return response()->json($callQueue);
     }
 
-    public function putUpdateQueue(Request $request, $id){
-        if($this->queueRepository->changeStatus($id, $request->input('status_id'))){
+    public function putUpdateQueue(Request $request, $id)
+    {
+        if ($this->queueRepository->changeStatus($id, $request->input('status_id'))) {
             return response()->json(['error' => false]);
         }
         return response()->json(['error' => true]);
     }
-
 }

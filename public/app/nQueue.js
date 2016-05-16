@@ -865,7 +865,8 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
             .success(function(data){
                 self._inCallingWait = data.id;
                 socket.emit("call:Queue", data);
-                socket.emit("remove:Queue", { index: _index, data: data })
+                socket.emit("remove:Queue", { index: _index, data: data });
+                ws.send(JSON.stringify(data));
                 self._inQueue.splice(_index, 1);
             });
     };
@@ -885,6 +886,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
         QueueApi
             .again({id: id})
             .success(function(data){
+                ws.send(JSON.stringify(data));
                 socket.emit("call:Queue", data);
             });
     };

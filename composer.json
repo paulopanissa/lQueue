@@ -10,7 +10,8 @@
         "tymon/jwt-auth": "0.5.*",
         "predis/predis": "^1.0",
         "doctrine/dbal": "^2.5",
-        "askedio/laravel-ratchet": "^0.3.0"
+        "askedio/laravel-ratchet": "^0.3.0",
+        "react/zmq": "0.2.*|0.3.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
