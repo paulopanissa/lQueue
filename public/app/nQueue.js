@@ -939,7 +939,6 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
 
         // Localizando Proximo na Fila
         var _update = vm.findAttend(self._inQueue, atendimento);
-        console.log(_update);
 
         // Pegando Index
         var _index = self._inQueue.indexOf(_update);
@@ -950,13 +949,13 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
             .success(function(data){
                 self._inCallingWait = data.id;
                 socket.emit("call:Queue", data);
-                socket.emit("remove:Queue", { index: _index, data: data });
+                socket.emit("remove:Queue", data);
                 //ws.send(JSON.stringify(data));
                 //self._inQueue.splice(_index, 1);
             });
     };
 
-    socket.on("destroy:Queue", function(data){
+    socket.on('destroy:Queue', function(data){
         console.log(data);
         var inQueue = vm.findId(seld._inQueue, data.id);
         var _index = self._inQueue.indexOf(inQueue);
