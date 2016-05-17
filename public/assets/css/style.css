@@ -1,4 +1,4 @@
-@import url("http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;lang=en");
+@import url('plugins/fonts/opensans.css');
 h1,
 h2,
 h3,
@@ -6463,4 +6463,163 @@ header .timestamp > .time {
 .btn-queue {
     font-size: 30px;
     padding: 90px 0;
+}
+
+/* *******************************************
+* Painel Browser
+******************************************** */
+.fullscreen {
+    width:100%;
+    height:100%;
+    min-height:100%;
+}
+section{
+    position: relative;
+    overflow: hidden;
+}
+
+.height-200 {
+    height:200px;
+}
+.height-270 {
+    height:270px;
+}
+
+/* margin */
+.m-a-0 { margin:        0 !important; }
+.m-t-0 { margin-top:    0 !important; }
+.m-r-0 { margin-right:  0 !important; }
+.m-b-0 { margin-bottom: 0 !important; }
+.m-l-0 { margin-left:   0 !important; }
+.m-x-0 { margin-right:  0 !important; margin-left:   0 !important; }
+.m-y-0 { margin-top:    0 !important; margin-bottom: 0 !important; }
+
+.m-a { margin:        10px !important; }
+.m-t { margin-top:    10px !important; }
+.m-r { margin-right:  10px !important; }
+.m-b { margin-bottom: 10px !important; }
+.m-l { margin-left:   10px !important; }
+.m-x { margin-right:  10px !important; margin-left: 10px !important; }
+.m-y { margin-top:    10px !important; margin-bottom: 10px !important; }
+.m-x-auto { margin-right: auto !important; margin-left: auto !important; }
+
+.m-a-md { margin:        25px !important; }
+.m-t-md { margin-top:    25px !important; }
+.m-r-md { margin-right:  25px !important; }
+.m-b-md { margin-bottom: 25px !important; }
+.m-l-md { margin-left:   25px !important; }
+.m-x-md { margin-right:  25px !important; margin-left:   25px !important; }
+.m-y-md { margin-top:    25px !important; margin-bottom: 25px !important; }
+
+.m-a-lg { margin:        50px !important; }
+.m-t-lg { margin-top:    50px !important; }
+.m-r-lg { margin-right:  50px !important; }
+.m-b-lg { margin-bottom: 50px !important; }
+.m-l-lg { margin-left:   50px !important; }
+.m-x-lg { margin-right:  50px !important; margin-left:   50px !important; }
+.m-y-lg { margin-top:    50px !important; margin-bottom: 50px !important; }
+
+.new-row-md,
+.new-row-sm { margin-top: 40px; }
+
+/* padding */
+.p-a-0 { padding:        0 !important; }
+.p-t-0 { padding-top:    0 !important; }
+.p-r-0 { padding-right:  0 !important; }
+.p-b-0 { padding-bottom: 0 !important; }
+.p-l-0 { padding-left:   0 !important; }
+.p-x-0 { padding-left:   0 !important; padding-right: 0 !important; }
+.p-y-0 { padding-top:    0 !important; padding-bottom: 0 !important; }
+
+.p-a { padding:        30px !important; }
+.p-t { padding-top:    30px !important; }
+.p-r { padding-right:  30px !important; }
+.p-b { padding-bottom: 30px !important; }
+.p-l { padding-left:   30px !important; }
+.p-x { padding-right:  30px !important; padding-left:   30px !important; }
+.p-y { padding-top:    30px !important; padding-bottom: 30px !important; }
+
+.p-a-md { padding:        60px !important; }
+.p-t-md { padding-top:    60px !important; }
+.p-r-md { padding-right:  60px !important; }
+.p-b-md { padding-bottom: 60px !important; }
+.p-l-md { padding-left:   60px !important; }
+.p-x-md { padding-right:  60px !important; padding-left:   60px !important; }
+.p-y-md { padding-top:    60px !important; padding-bottom: 60px !important; }
+
+.p-a-lg { padding:        120px !important; }
+.p-t-lg { padding-top:    120px !important; }
+.p-r-lg { padding-right:  120px !important; }
+.p-b-lg { padding-bottom: 120px !important; }
+.p-l-lg { padding-left:   120px !important; }
+.p-x-lg { padding-right:  120px !important; padding-left:   120px !important; }
+.p-y-lg { padding-top:    120px !important; padding-bottom: 120px !important; }
+
+/* centering vertically content */
+.y-middle {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: center;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+}
+
+.b-r-5 {
+    border-radius: 5px
+}
+.border-10 {
+    border: 5px solid #34495e;
+    box-shadow:inset 0 0 3px 0px #2c3e50;
+}
+
+.f-s-20 {
+    font-size: 20px
+}
+.f-s-40 {
+    font-size: 40px
+}
+.f-s-60 {
+    font-size: 60px
+}
+.f-s-160 {
+    font-size: 900%
+}
+
+.bg-midnight {
+    background-color: #2c3e50;
+}
+.text-white {
+    color: #ffffff;
+}
+.text-cloud {
+    color: #ecf0f1;
+}
+.painel-senha {
+    background-color: #2c3e50;
+}
+
+.painel-senha > .assist {
+    position: absolute;
+    height: 50px;
+    top: 15px;
+    left: 10px;
+}
+.painel-assist {
+    position: absolute;
+    margin: 10px 0;
+    padding: 30px;
+    background-color: #34495e;
+    color: white;
+    font-size: 50px;
+}
+.painel-text-senha {
+    font-size: 250px !important;
+}
+.painel-text-senha:first-child {
+    line-height: 170px;
 }
