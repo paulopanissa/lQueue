@@ -1,0 +1,63 @@
+<div id="layoutQueue">
+    <section class="fullscreen">
+
+        <div class="row p-x m-t-md m-b">
+            <div class="col-md-3">
+                <div class="logo">
+                    <img src="assets/images/logo.png" alt="" class="img-responsive" />
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="com-md-12">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h3 class="text-right">11:03:58</h3>
+            </div>
+        </div>
+
+        <div class="row p-x p-t">
+            <div class="col-md-6 painel-senha height-270 border-10 b-r-5 y-middle">
+                <div class="assist">
+                    <p class="text-center text-cloud f-s-40">SENHA:</p>
+                </div>
+                <h2 class="text-white f-s-160">{{ _newCall.senha }}</h2>
+            </div>
+
+            <div class="col-md-5 col-md-offset-1 painel-senha height-270 border-10 b-r-5 y-middle">
+                <div class="assist">
+                    <p class="text-center text-cloud f-s-40">GUICHÊ:</p>
+                </div>
+                <h2 class="text-white f-s-160">{{ _newCall.guiche }}</h2>
+            </div>
+        </div>
+
+        <!-- Row [3 Ultimas Senhas] -->
+        <div class="row p-a">
+            <div class="m-y">
+                <h3 class="text-left text-white orbitron"> ÚLTIMAS SENHAS</h3>
+            </div>
+
+            <div class="col-md-4" ng-repeat="item in _oldCall | limitTo:3">
+                <div class="row height-200 m-a bg-midnight b-r-5 border-10 y-middle">
+                    <div class="col-md-6">
+                        <p class="text-center text-cloud f-s-20">SENHA:</p>
+                        <br>
+                        <h1 class="text-center text-white orbitron f-s-40">{{ item.senha }}</h1>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-center text-cloud f-s-20">GUICHÊ:</p>
+                        <br>
+                        <h1 class="text-center text-white orbitron f-s-40">{{ item.guiche }}</h1>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- //End Row [3 Ultimas Senhas] -->
+
+    </section>
+</div>
