@@ -66,6 +66,28 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
                 pageTitle: 'Retire sua senha - Cartório Ayache'
             }
         })
+
+        .state('tv', {
+            url: '/tv',
+            templateUrl: 'partials/tv/index.html',
+            controller: "TvCtrl as vm",
+            data: {
+                specialClass: 'nqueueBg',
+                pageTitle: "Tv"
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            files: [
+                                'vendor/buzz/dist/buzz.min.js'
+                            ]
+                        }
+                    ]);
+                }
+            }
+        })
+
         // Logar no Sistema
         .state('auth', {
             url: '/login',
@@ -87,7 +109,9 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
             templateUrl: 'partials/admin/queue/index.html',
             data: { pageTitle: 'Controle de Senhas', requireLogin: true }
         })
-
+        /**
+         * Usuários Routes
+         */
         .state('admin.users', {
             url: '/users',
             templateUrl: 'partials/admin/users/index.html',
