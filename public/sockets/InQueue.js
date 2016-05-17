@@ -2,6 +2,7 @@ module.exports = function(io){
     var sockets = io.sockets;
     sockets.on('connection', function(socket){
         socket.on("add:Queue", function(data){
+            console.log(data);
             var _return = {
                 senha: data.pwd,
                 atendimento: configAtendimentoToCsharp(data.queue),
