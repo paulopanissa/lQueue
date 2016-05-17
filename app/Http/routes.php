@@ -8,7 +8,7 @@ Route::get('/', function(){
 });
 
 Route::get('/tv', function(){
-   return redirect('#/tv');
+   return redirect('/#/tv');
 });
 
 /**
