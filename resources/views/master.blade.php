@@ -17,7 +17,7 @@
 <!--[End Load View] -->
 
 <!-- [Scritps] -->
-<script src="http://code.jquery.com/jquery-2.1.1.js "></script>
+<script src="{!! asset('assets/js/plugins/jquery/jquery-2.1.1.js') !!}"></script>
 <script src="{!! asset('assets/js/plugins/jquery-ui/jquery-ui.js') !!}"></script>
 <script src="{!! asset('assets/js/plugins/metisMenu/jquery.metisMenu.js') !!}"></script>
 <script src="{!! asset('assets/js/plugins/slimscroll/jquery.slimscroll.min.js') !!}"></script>
