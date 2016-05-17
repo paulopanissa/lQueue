@@ -7,6 +7,9 @@ Route::get('/', function(){
     return view('master');
 });
 
+Route::get('/tv', function(){
+   return redirect('#/tv');
+});
 
 /**
  * Simples Routes
