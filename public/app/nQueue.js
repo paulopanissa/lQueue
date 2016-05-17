@@ -199,6 +199,28 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
                 pageTitle: 'Retire sua senha - Cartório Ayache'
             }
         })
+
+        .state('tv', {
+            url: '/tv',
+            templateUrl: 'partials/tv/index.html',
+            controller: "TvCtrl as vm",
+            data: {
+                specialClass: 'nqueueBg',
+                pageTitle: "Tv"
+            },
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    return $ocLazyLoad.load([
+                        {
+                            files: [
+                                'vendor/buzz/dist/buzz.min.js'
+                            ]
+                        }
+                    ]);
+                }
+            }
+        })
+
         // Logar no Sistema
         .state('auth', {
             url: '/login',
@@ -220,7 +242,9 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
             templateUrl: 'partials/admin/queue/index.html',
             data: { pageTitle: 'Controle de Senhas', requireLogin: true }
         })
-
+        /**
+         * Usuários Routes
+         */
         .state('admin.users', {
             url: '/users',
             templateUrl: 'partials/admin/users/index.html',
@@ -698,7 +722,7 @@ function ProfileCtrl($http, $auth, $rootScope, $state){
 }
 
 /**
- *
+ * Home Controller
  * @param $scope
  * @param QueueModel
  * @param socket
@@ -769,6 +793,69 @@ function HomeCtrl($scope, QueueModel, socket){
     };
 }
 
+
+
+function TvCtrl($scope, socket){
+    var vm = this,
+        self = $scope;
+
+    $scope.inQueue = [];
+    $scope._newCall;
+    $scope._oldCall = [];
+
+
+    socket.on('tv:Calling', function(data){
+        vm.received(data);
+    });
+
+    vm.received = function(e){
+        var received = e;
+        $scope.$apply(function(){
+            $scope._newCall = received;
+            console.log($scope._newCall);
+            /**
+             * PASSAR OS PARAMETROS AQUI PARA FAZER O TOQUE DO AUDIO
+             */
+            PainelWeb.Alert.play();
+        })
+    };
+
+
+    $scope.$watch('_newCall', function(newValue, oldValue){
+        if(oldValue){
+            var old = angular.copy(oldValue);
+            if(!vm.compareNewAndOld($scope._newCall, old)){
+                if(!vm.existsInArray($scope._oldCall, old.senha)){
+                    $scope._oldCall.unshift(old);
+                }
+            }
+            if($scope._oldCall.length >= 4){
+                $scope._oldCall.pop();
+            }
+        }
+    });
+
+    vm.existsInArray = function(list, object){
+        var x;
+        for(x in list){
+            console.log(list[x]);
+            if(list.hasOwnProperty(x) && list[x].senha === object){
+                console.log(list[x]);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    vm.compareNewAndOld = function(nV, oV){
+        if(nV.senha === oV.senha){
+            return true;
+        }else{
+            return false;
+        }
+    };
+}
+
 /**
  * Queue Manager
  * @param $scope
@@ -828,7 +915,6 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
         QueueApi
             .inQueue()
             .success(function(data){
-                console.log(data);
                 self._inQueue = data;
             })
     };
@@ -866,7 +952,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
                 self._inCallingWait = data.id;
                 socket.emit("call:Queue", data);
                 socket.emit("remove:Queue", { index: _index, data: data });
-                ws.send(JSON.stringify(data));
+                //ws.send(JSON.stringify(data));
                 self._inQueue.splice(_index, 1);
             });
     };
@@ -886,7 +972,7 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
         QueueApi
             .again({id: id})
             .success(function(data){
-                ws.send(JSON.stringify(data));
+                //ws.send(JSON.stringify(data));
                 socket.emit("call:Queue", data);
             });
     };
@@ -1063,11 +1149,20 @@ function UsersEditCtrl($scope, $rootScope, $stateParams, UsersApi){
             return false;
         }
     }
-
-
-
-
 }
+
+/**
+ * Play Audios
+ */
+var PainelWeb = {
+  Alert: {
+        play: function(){
+            var filename = new buzz.sound("/assets/media/alert/airport.wav");
+            filename.play();
+        }
+    }
+};
+
 
 angular
     .module('nQueue')
@@ -1075,6 +1170,7 @@ angular
     .controller('AuthCtrl', AuthCtrl)
     .controller('ProfileCtrl', ProfileCtrl)
     .controller('HomeCtrl', HomeCtrl)
+    .controller('TvCtrl', TvCtrl)
     .controller('QueueCtrl', QueueCtrl)
     .controller('UsersCtrl', UsersCtrl)
     .controller('UsersNewCtrl', UsersNewCtrl)
