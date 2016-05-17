@@ -3,9 +3,9 @@ module.exports = function(io){
     var sockets = io.sockets;
 
     sockets.on('connection', function(socket){
-        // Adicionar a Fila de Atendimento
+        // Remover da Fila de Atendimento para Todos
         socket.on("remove:Queue", function(data){
-
+            sockets.emit('destroy:Queue', data);
         });
     });
 };

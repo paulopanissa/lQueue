@@ -253,7 +253,6 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
      * Via socket.io
      */
     socket.on("in:Queue", function(data){
-        console.log(data);
         self._inQueue.push(data);
     });
 
@@ -321,9 +320,16 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
                 socket.emit("call:Queue", data);
                 socket.emit("remove:Queue", { index: _index, data: data });
                 //ws.send(JSON.stringify(data));
-                self._inQueue.splice(_index, 1);
+                //self._inQueue.splice(_index, 1);
             });
     };
+
+    socket.on("destroy:Queue", function(data){
+        console.log(data);
+        var inQueue = vm.findId(seld._inQueue, data.id);
+        var _index = self._inQueue.indexOf(inQueue);
+        self._inQueue.splice(_index, 1);
+    });
 
     /**
      * Status do Atendimento
@@ -409,6 +415,14 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
             }
         }
     };
+
+    vm.findId = function(_inQueue, _id){
+        for(var i=0;i<_inQueue.length; i++){
+            if(_inQueue[i].id == _id){
+                return _inQueue[i];
+            }
+        }
+    }
 
 }
 
