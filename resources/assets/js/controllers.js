@@ -323,18 +323,18 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
             });
     };
 
-    socket.on('destroy:Queue', function(data){
+    socket.on("destroy:Queue", function(data){
         console.log(data);
-        var inQueue = vm.findId(seld._inQueue, data.id);
+        var inQueue = vm.findId(self._inQueue, data.id);
         var _index = self._inQueue.indexOf(inQueue);
         self._inQueue.splice(_index, 1);
     });
 
+
     /**
      * Status do Atendimento
      */
-
-    self._saveCalling;
+    self._saveCalling = null;
 
     self.showButtonsCancel = false;
     /**
