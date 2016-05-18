@@ -442,6 +442,7 @@ function ngServerTime($timeout, timeServer){
                     .then(function(response){
                         $scope.dateServer = response.data;
                         var tick = function() {
+                            console.log($scope.dateServer);
                             $scope.dateST = new Date($scope.dateServer);
                             console.log($scope.dateST)
                             $timeout(tick, 1000);
