@@ -98,16 +98,18 @@ function ngServerTime($timeout, timeServer){
         + '</span>'
         + '</span>',
         controller: function($scope, $element) {
-            timeServer.get()
-                .then(function(response){
-                    console.log(response);
-                    $scope.dateServer = response;
-                    var tick = function() {
-                        $scope.date = new Date($scope.dateServer);
+            $scope.init = function(){
+                timeServer.get()
+                    .then(function(response){
+                        $scope.dateServer = response.data;
+                        var tick = function() {
+                            $scope.date = new Date($scope.dateServer);
+                            $timeout(tick, 1000);
+                        };
                         $timeout(tick, 1000);
-                    };
-            });
-            $timeout(tick, 1000);
+                });
+            }
+            $scope.init();
         }
     }
 }
