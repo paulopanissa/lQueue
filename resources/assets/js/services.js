@@ -10,6 +10,7 @@ angular
     .factory('QueueApi', QueueApi)
     .factory('UsersApi', UsersApi)
     .factory('Setting', Setting)
+    .factory('timeServer', timeServer)
     .factory('SessionService', SessionService);
 
     /**
@@ -101,6 +102,16 @@ angular
             }
         }
 
+    }
+
+    function timeServer($http){
+        return {
+            get: function(){
+                var times = $http.get('/time-in-server')
+                    .success(function(response){ response});
+                return times;
+            }
+        }
     }
 
     function SessionService(){

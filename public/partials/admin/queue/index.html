@@ -110,6 +110,7 @@
                                 <th>Senha</th>
                                 <th>Atendimento</th>
                                 <th>Aguardando</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -118,6 +119,12 @@
                                 <td>{{ item.pwd }}</td>
                                 <td>{{ item.queue_id | attend }}</td>
                                 <td><time am-time-ago="item.created_at" title="{{ item.created_at | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time></td>
+                                <td>
+                                    <button class="btn btn-xs btn-outline btn-danger"
+                                            ng-click="vm.removeQueue(item.id)">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </td>
                             </tr>
                             </tbody>
                         </table>

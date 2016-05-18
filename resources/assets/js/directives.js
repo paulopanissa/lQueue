@@ -85,6 +85,29 @@ function ngClock($timeout){
     }
 }
 
+function ngServerTime($timeout, timeServer){
+    return {
+        restrict: 'E',
+        template:'<span class="time">'
+        + '<span class="hours">'
+        + '{{date.getHours() | pad}}'
+        + '</span>:<span class="minutes">'
+        + '{{date.getMinutes() | pad}}'
+        + '</span>:<span class="seconds">'
+        + '{{date.getSeconds() | pad}}'
+        + '</span>'
+        + '</span>',
+        controller: function($scope, $element) {
+            $scope.date = new Date(timeServer.get());
+            var tick = function() {
+                $scope.date = new Date(timeServer.get());
+                $timeout(tick, 1000);
+            };
+            $timeout(tick, 1000);
+        }
+    }
+}
+
 /**
  * Mask para CPF e CNPJ
  * @returns {{require: string, restrict: string, link: link}}
@@ -241,6 +264,7 @@ angular
     .directive('pageTitle', pageTitle)
     .directive('currentTime', currentTime)
     .directive('ngClock', ngClock)
+    .directive('ngServerTime', ngServerTime)
     .directive('maskCpfCnpj', maskCpfCnpj)
     .directive('capitalize', capitalize)
     .directive('icheck', icheck)

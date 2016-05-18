@@ -44,6 +44,11 @@ class HomeController extends Controller
         return response()->json($toSave);
     }
 
+    public function timesInServer(){
+        $serverTime = time() * 1000;
+        return $serverTime;
+    }
+
     public function findQueue($id){
         $Queue = new QueueRepository();
         $find = $Queue->findQueue($id);

@@ -1,28 +1,17 @@
 <?php
-
 /**
- * AngularJS SPA
+ * AngularJS SPA and Redirect to AngularJS
  */
-Route::get('/', function(){
-    return view('master');
-});
-
-Route::get('/tv', function(){
-   return redirect('/#/tv');
-});
+Route::get('/', function(){ return view('master'); });
+Route::get('/tv', function(){ return redirect('/#/tv'); });
+Route::get('/login', function(){ return redirect('#/login'); });
 
 /**
  * Simples Routes
  */
 Route::get('/list-to-queue', 'HomeController@listToQueue');
 Route::post('/add-in-queue', 'HomeController@addInQueue');
-
-/**
- * Login
- */
-Route::get('/login', function(){
-    return redirect('#/login');
-});
+Route::get('/time-in-server', 'HomeController@timesInServer');
 
 
 Route::group(['prefix' => 'api'], function(){
@@ -32,7 +21,9 @@ Route::group(['prefix' => 'api'], function(){
     Route::post('authenticate', 'Api\AuthController@authenticate');
     Route::get('authenticate/user', 'Api\AuthController@getAuthenticatedUser');
 
-
+    /**
+     * Rotas Autenticadas pelo jwt
+     */
     Route::group(['prefix' => 'queue', 'middleware'=> 'jwt.auth'], function(){
        Route::get('', 'Api\QueueController@getInQueue');
        Route::post('/call', 'Api\QueueController@postCallQueue');

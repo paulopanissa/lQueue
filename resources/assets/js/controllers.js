@@ -324,7 +324,6 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
     };
 
     socket.on("destroy:Queue", function(data){
-        console.log(data);
         var inQueue = vm.findId(self._inQueue, data.id);
         var _index = self._inQueue.indexOf(inQueue);
         self._inQueue.splice(_index, 1);
@@ -421,6 +420,17 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
                 return _inQueue[i];
             }
         }
+    }
+
+    vm.removeQueue = function(_id){
+        console.log(_id);
+        QueueApi
+            .status(_id, {status_id: 5})
+            .success(function(response){
+                var data = { id: _id }
+                socket.emit("remove:Queue", data);
+
+            });
     }
 
 }
