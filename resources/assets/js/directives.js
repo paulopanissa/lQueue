@@ -90,28 +90,20 @@ function ngServerTime($timeout, timeServer){
         restrict: 'E',
         template:'<span class="time">'
         + '<span class="hours">'
-        + '{{dateST.getHours() | pad}}'
+        + '{{date.getHours() | pad}}'
         + '</span>:<span class="minutes">'
-        + '{{dateST.getMinutes() | pad}}'
+        + '{{date.getMinutes() | pad}}'
         + '</span>:<span class="seconds">'
-        + '{{dateST.getSeconds() | pad}}'
+        + '{{date.getSeconds() | pad}}'
         + '</span>'
         + '</span>',
         controller: function($scope, $element) {
-            $scope.init = function(){
-                timeServer.get()
-                    .then(function(response){
-                        $scope.dateServer = response.data;
-                        var tick = function() {
-                            console.log($scope.dateServer);
-                            $scope.dateST = new Date($scope.dateServer);
-                            console.log($scope.dateST)
-                            $timeout(tick, 1000);
-                        };
-                        $timeout(tick, 1000);
-                });
-            }
-            $scope.init();
+            $scope.date = new Date();
+            var tick = function() {
+                $scope.date = new Date();
+                $timeout(tick, 1000);
+            };
+            $timeout(tick, 1000);
         }
     }
 }
