@@ -25,6 +25,7 @@ angular
     .factory('QueueApi', QueueApi)
     .factory('UsersApi', UsersApi)
     .factory('Setting', Setting)
+    .factory('timeServer', timeServer)
     .factory('SessionService', SessionService);
 
     /**
@@ -116,6 +117,14 @@ angular
             }
         }
 
+    }
+
+    function timeServer($http){
+        return {
+            get: function(){
+                return $http.get('/time-in-server');
+            }
+        }
     }
 
     function SessionService(){
@@ -415,6 +424,36 @@ function ngClock($timeout){
     }
 }
 
+function ngServerTime($timeout, timeServer){
+    return {
+        restrict: 'E',
+        template:'<span class="time">'
+        + '<span class="hours">'
+        + '{{date.getHours() | pad}}'
+        + '</span>:<span class="minutes">'
+        + '{{date.getMinutes() | pad}}'
+        + '</span>:<span class="seconds">'
+        + '{{date.getSeconds() | pad}}'
+        + '</span>'
+        + '</span>',
+        controller: function($scope, $element) {
+            $scope.dateServer = null;
+            timeServer.get()
+                .success(function(response){
+                    $scope.dateServer = response;
+            });
+
+
+            $scope.date = new Date($scope.dateServer);
+            var tick = function() {
+                $scope.date = new Date($scope.dateServer);
+                $timeout(tick, 1000);
+            };
+            $timeout(tick, 1000);
+        }
+    }
+}
+
 /**
  * Mask para CPF e CNPJ
  * @returns {{require: string, restrict: string, link: link}}
@@ -571,6 +610,7 @@ angular
     .directive('pageTitle', pageTitle)
     .directive('currentTime', currentTime)
     .directive('ngClock', ngClock)
+    .directive('ngServerTime', ngServerTime)
     .directive('maskCpfCnpj', maskCpfCnpj)
     .directive('capitalize', capitalize)
     .directive('icheck', icheck)
@@ -956,7 +996,6 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
     };
 
     socket.on("destroy:Queue", function(data){
-        console.log(data);
         var inQueue = vm.findId(self._inQueue, data.id);
         var _index = self._inQueue.indexOf(inQueue);
         self._inQueue.splice(_index, 1);
@@ -1053,6 +1092,17 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
                 return _inQueue[i];
             }
         }
+    }
+
+    vm.removeQueue = function(_id){
+        console.log(_id);
+        QueueApi
+            .status(_id, {status_id: 5})
+            .success(function(response){
+                var data = { id: _id }
+                socket.emit("remove:Queue", data);
+
+            });
     }
 
 }

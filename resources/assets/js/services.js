@@ -107,9 +107,7 @@ angular
     function timeServer($http){
         return {
             get: function(){
-                var times = $http.get('/time-in-server')
-                    .success(function(response){ response});
-                return times;
+                return $http.get('/time-in-server');
             }
         }
     }
