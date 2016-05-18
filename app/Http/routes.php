@@ -39,8 +39,16 @@ Route::group(['prefix' => 'api'], function(){
 
 
     Route::group(['prefix' => 'setting', 'middleware' => 'jwt.auth'], function(){
-
         Route::resource('access', 'Api\Setting\AccessController', ['only' => ['index']]);
+
+        /**
+         * Ticket Windows
+         */
+        Route::group(['prefix' => 'ticket', 'middleware' => 'jwt.auth'], function(){
+           Route::get('users', 'Api\Setting\TicketController@getUsers');
+           Route::get('tickets', 'Api\Setting\TicketController@getTickets');
+           Route::get('users-in-tickets', 'Api\Setting\TicketController@getUsersInTickets');
+        });
 
     });
 
