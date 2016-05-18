@@ -437,9 +437,10 @@ function ngServerTime($timeout, timeServer){
         + '</span>'
         + '</span>',
         controller: function($scope, $element) {
-            $scope.dateServer = null;
+            $scope.dateServer;
             timeServer.get()
                 .success(function(response){
+                    console.log(response);
                     $scope.dateServer = response;
             });
 
