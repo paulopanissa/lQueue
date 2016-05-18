@@ -1,0 +1,47 @@
+<div class="wrapper wrapper-content animated fadeIn">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Usuário no Guichê</h5>
+                    <div class="clearfix pull-right">
+                        <button class="btn btn-danger btn-xs btn-outline">
+                            <i class="fa fa-plus"></i> Adicionar Usuário ao Guichê
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="table table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="col-md-8">Usuário</th>
+                                <th class="col-md-2">Guichê</th>
+                                <th class="col-md-2">Ações</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in _usersInTicket">
+                                    <th>{{ item.user }}</th>
+                                    <th class="text-right">{{ item.ticket}}</th>
+                                    <th>
+                                        <button ui-sref="admin.ticket-edit({id: item.id})"
+                                                class="btn btn-warning btn-outline btn-xs">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-outline btn-xs"
+                                                ng-click="vm.deleteUserInTicket(item.id, $index)">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </th>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -99,6 +99,15 @@ angular
         return {
             get: function($url){
                 return $http.get(base + $url);
+            },
+            save: function(url, data){
+                return $http.post(base + url, data);
+            },
+            update: function(url, data){
+                return $http.put(base + url, data);
+            },
+            destroy: function(url){
+                return $http.delete(base + url);
             }
         }
 

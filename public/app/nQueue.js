@@ -114,6 +114,15 @@ angular
         return {
             get: function($url){
                 return $http.get(base + $url);
+            },
+            save: function(url, data){
+                return $http.post(base + url, data);
+            },
+            update: function(url, data){
+                return $http.put(base + url, data);
+            },
+            destroy: function(url){
+                return $http.delete(base + url);
             }
         }
 
@@ -272,6 +281,20 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
             templateUrl: 'partials/admin/users/edit.html',
             controller: "UsersEditCtrl as vm",
             data: { pageTitle: 'Editar Usuário', requireLogin: true }
+        })
+
+        .state('admin.ticket', {
+            url: '/ticket/user-in-ticket',
+            templateUrl: '/partials/admin/ticket/index.html',
+            controller: "UsersInTicketCtrl as vm",
+            data: { pageTitle: 'Usuário no Guichê', requireLogin: true }
+        })
+
+        .state('admin.ticket-edit', {
+            url: '/ticket/user-in-ticket/{id}/edit',
+            templateUrl: '/partials/admin/ticket/edit.html',
+            controller: "UsersInTicketEditCtrl as vm",
+            data: { pageTitle: 'Editar o usuário no guichê', requireLogin: true }
         })
 }
 
@@ -1085,18 +1108,18 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
                 return _inQueue[i];
             }
         }
-    }
+    };
 
     vm.removeQueue = function(_id){
         console.log(_id);
         QueueApi
             .status(_id, {status_id: 5})
             .success(function(response){
-                var data = { id: _id }
+                var data = { id: _id };
                 socket.emit("remove:Queue", data);
 
             });
-    }
+    };
 
 }
 
@@ -1207,13 +1230,48 @@ function UsersEditCtrl($scope, $rootScope, $stateParams, UsersApi){
     }
 }
 
+function UsersInTicketCtrl($scope, $rootScope, Setting){
+    var vm = this,
+        self = $scope;
+
+    self._usersInTicket = [];
+
+    self._init = function(){
+        Setting
+            .get('ticket/users-in-tickets')
+            .success(function(response){
+                self._usersInTicket = response;
+            });
+    };
+
+    /**
+     *
+     */
+    self._init();
+
+
+    /**
+     * Deletar Usuário do Guichê
+     * @param _id
+     * @param _index
+     */
+    vm.deleteUserInTicket = function(_id, _index){
+        Setting
+            .destroy('ticket/users-in-tickets-delete/' + _id)
+            .success(function(response){
+                self._usersInTicket.splice(_index, 1);
+            })
+    }
+    
+}
+
 /**
  * Play Audios
  */
 var PainelWeb = {
   Alert: {
         play: function(){
-            var filename = new buzz.sound("/assets/media/alert/airport.wav");
+            var filename = new buzz.sound("/assets/media/alert/airport.mp3");
             filename.play();
         }
     }
@@ -1230,5 +1288,6 @@ angular
     .controller('QueueCtrl', QueueCtrl)
     .controller('UsersCtrl', UsersCtrl)
     .controller('UsersNewCtrl', UsersNewCtrl)
-    .controller('UsersEditCtrl', UsersEditCtrl);
+    .controller('UsersEditCtrl', UsersEditCtrl)
+    .controller('UsersInTicketCtrl', UsersInTicketCtrl);
 //# sourceMappingURL=nQueue.js.map

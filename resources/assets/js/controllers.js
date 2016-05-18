@@ -420,18 +420,18 @@ function QueueCtrl($scope, $rootScope, QueueApi, socket){
                 return _inQueue[i];
             }
         }
-    }
+    };
 
     vm.removeQueue = function(_id){
         console.log(_id);
         QueueApi
             .status(_id, {status_id: 5})
             .success(function(response){
-                var data = { id: _id }
+                var data = { id: _id };
                 socket.emit("remove:Queue", data);
 
             });
-    }
+    };
 
 }
 
@@ -542,13 +542,48 @@ function UsersEditCtrl($scope, $rootScope, $stateParams, UsersApi){
     }
 }
 
+function UsersInTicketCtrl($scope, $rootScope, Setting){
+    var vm = this,
+        self = $scope;
+
+    self._usersInTicket = [];
+
+    self._init = function(){
+        Setting
+            .get('ticket/users-in-tickets')
+            .success(function(response){
+                self._usersInTicket = response;
+            });
+    };
+
+    /**
+     *
+     */
+    self._init();
+
+
+    /**
+     * Deletar Usuário do Guichê
+     * @param _id
+     * @param _index
+     */
+    vm.deleteUserInTicket = function(_id, _index){
+        Setting
+            .destroy('ticket/users-in-tickets-delete/' + _id)
+            .success(function(response){
+                self._usersInTicket.splice(_index, 1);
+            })
+    }
+    
+}
+
 /**
  * Play Audios
  */
 var PainelWeb = {
   Alert: {
         play: function(){
-            var filename = new buzz.sound("/assets/media/alert/airport.wav");
+            var filename = new buzz.sound("/assets/media/alert/airport.mp3");
             filename.play();
         }
     }
@@ -565,4 +600,5 @@ angular
     .controller('QueueCtrl', QueueCtrl)
     .controller('UsersCtrl', UsersCtrl)
     .controller('UsersNewCtrl', UsersNewCtrl)
-    .controller('UsersEditCtrl', UsersEditCtrl);
+    .controller('UsersEditCtrl', UsersEditCtrl)
+    .controller('UsersInTicketCtrl', UsersInTicketCtrl);

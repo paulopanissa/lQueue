@@ -31,23 +31,27 @@ Route::group(['prefix' => 'api'], function(){
        Route::put('/status/{id}', 'Api\QueueController@putUpdateQueue');
     });
 
-    Route::group(['prefix' => 'users'], function(){
+    Route::group(['prefix' => 'users', 'middleware'=> 'jwt.auth'], function(){
        Route::get('paginate', 'Api\UsersController@paginateUsers');
        Route::post('create', 'Api\UsersController@create');
        Route::get('{id}/edit', 'Api\UsersController@edit');
     });
 
 
-    Route::group(['prefix' => 'setting', 'middleware' => 'jwt.auth'], function(){
+    Route::group(['prefix' => 'setting'], function(){
         Route::resource('access', 'Api\Setting\AccessController', ['only' => ['index']]);
 
         /**
          * Ticket Windows
          */
-        Route::group(['prefix' => 'ticket', 'middleware' => 'jwt.auth'], function(){
+        Route::group(['prefix' => 'ticket'], function(){
+
            Route::get('users', 'Api\Setting\TicketController@getUsers');
            Route::get('tickets', 'Api\Setting\TicketController@getTickets');
            Route::get('users-in-tickets', 'Api\Setting\TicketController@getUsersInTickets');
+
+
+           Route::delete('/users-in-tickets-delete/{id}', 'Api\Setting\TicketController@destroyUsersInTickets');
         });
 
     });

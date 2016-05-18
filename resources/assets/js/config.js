@@ -131,6 +131,20 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
             controller: "UsersEditCtrl as vm",
             data: { pageTitle: 'Editar Usuário', requireLogin: true }
         })
+
+        .state('admin.ticket', {
+            url: '/ticket/user-in-ticket',
+            templateUrl: '/partials/admin/ticket/index.html',
+            controller: "UsersInTicketCtrl as vm",
+            data: { pageTitle: 'Usuário no Guichê', requireLogin: true }
+        })
+
+        .state('admin.ticket-edit', {
+            url: '/ticket/user-in-ticket/{id}/edit',
+            templateUrl: '/partials/admin/ticket/edit.html',
+            controller: "UsersInTicketEditCtrl as vm",
+            data: { pageTitle: 'Editar o usuário no guichê', requireLogin: true }
+        })
 }
 
 
