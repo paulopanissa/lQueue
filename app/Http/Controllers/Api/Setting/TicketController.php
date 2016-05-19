@@ -11,6 +11,11 @@ use App\Http\Controllers\Controller;
 
 class TicketController extends Controller
 {
+
+
+
+
+
     /**
      * Get all Users
      * @return \Illuminate\Database\Eloquent\Collection|static[]
@@ -45,12 +50,28 @@ class TicketController extends Controller
         return $usersInTicket;
     }
 
+
+    public function storeUsersInTicket(Request $request){
+        $store = [
+            'user_id' => $request->input('user'),
+            'ticket_id' => $request->input('ticket')
+        ];
+        $new = UsersTicketWindow::create($store);
+        return response()->json([
+            'id'        => $new->id,
+            'user'      => $new->user->name,
+            'ticket'    => $new->ticket->number
+        ]);
+    }
+
     /**
      * 
      * @param $id
      */
     public function destroyUsersInTickets($id){
+
         return UsersTicketWindow::destroy($id);
+
     }
 
 }

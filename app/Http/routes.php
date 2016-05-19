@@ -4,7 +4,7 @@
  */
 Route::get('/', function(){ return view('master'); });
 Route::get('/tv', function(){ return redirect('/#/tv'); });
-Route::get('/login', function(){ return redirect('#/login'); });
+Route::get('/login', function(){ return redirect('/#/login'); });
 
 /**
  * Simples Routes
@@ -51,6 +51,7 @@ Route::group(['prefix' => 'api'], function(){
            Route::get('users-in-tickets', 'Api\Setting\TicketController@getUsersInTickets');
 
 
+           Route::post('/user-in-tickets', 'Api\Setting\TicketController@storeUsersInTicket');
            Route::delete('/users-in-tickets-delete/{id}', 'Api\Setting\TicketController@destroyUsersInTickets');
         });
 

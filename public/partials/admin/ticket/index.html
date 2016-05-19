@@ -1,12 +1,53 @@
 <div class="wrapper wrapper-content animated fadeIn">
 
+    <div class="row" ng-show="showCreate" ng-controller="UsersInTicketCreateCtrl as create">
+        <div class="col-md-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Novo usuário no Guichê</h5>
+                </div>
+                <div class="ibox-content">
+                    <form ng-submit="create.register(form)">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <select class="form-control"
+                                            ng-model="form.user"
+                                            ng-options="item.id as item.name for item in users">
+                                        <option value="">Selecione o Usuário</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <select class="form-control"
+                                            ng-model="form.ticket"
+                                            ng-options="item.id as item.number for item in tickets">
+                                        <option value="">Selecione o Guichê</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <button class="btn btn-info btn-outline btn-block">
+                                    <i class="fa fa-check"></i>Salvar
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             <div class="ibox">
                 <div class="ibox-title">
                     <h5>Usuário no Guichê</h5>
                     <div class="clearfix pull-right">
-                        <button class="btn btn-danger btn-xs btn-outline">
+                        <button class="btn btn-danger btn-xs btn-outline"
+                                ng-click="showCreate=true">
                             <i class="fa fa-plus"></i> Adicionar Usuário ao Guichê
                         </button>
                     </div>

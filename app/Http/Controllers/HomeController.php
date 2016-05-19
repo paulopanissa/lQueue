@@ -45,7 +45,7 @@ class HomeController extends Controller
     }
 
     public function timesInServer(){
-        $serverTime = time() * 1000;
+        $serverTime = time();
         return $serverTime;
     }
 

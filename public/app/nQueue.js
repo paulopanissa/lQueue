@@ -290,6 +290,13 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
             data: { pageTitle: 'Usuário no Guichê', requireLogin: true }
         })
 
+        .state('admin.ticket-create', {
+            url: '/ticket/user-in-ticket/create',
+            templateUrl: '/partials/admin/ticket/create.html',
+            controller: "UsersInTicketCreateCtrl as vm",
+            data: { pageTitle: "Novo Usuário no Guichê", requireLogin: true }
+        })
+
         .state('admin.ticket-edit', {
             url: '/ticket/user-in-ticket/{id}/edit',
             templateUrl: '/partials/admin/ticket/edit.html',
@@ -1245,7 +1252,7 @@ function UsersInTicketCtrl($scope, $rootScope, Setting){
     };
 
     /**
-     *
+     * Init Page
      */
     self._init();
 
@@ -1262,7 +1269,29 @@ function UsersInTicketCtrl($scope, $rootScope, Setting){
                 self._usersInTicket.splice(_index, 1);
             })
     }
-    
+}
+
+function UsersInTicketCreateCtrl($scope, Setting){
+    var vm = this,
+        self = $scope;
+
+    self.users = [];
+    self.tickets = [];
+
+    self._init = function(){
+        Setting.get('ticket/users').success(function(response){self.users = response});
+        Setting.get('ticket/tickets').success(function(response){self.tickets=response});
+    }
+    self._init();
+
+    vm.register = function(form){
+        Setting
+            .save('ticket/user-in-tickets', form)
+            .success(function(response){
+                console.log(response);
+            });
+    }
+
 }
 
 /**
@@ -1289,5 +1318,6 @@ angular
     .controller('UsersCtrl', UsersCtrl)
     .controller('UsersNewCtrl', UsersNewCtrl)
     .controller('UsersEditCtrl', UsersEditCtrl)
-    .controller('UsersInTicketCtrl', UsersInTicketCtrl);
+    .controller('UsersInTicketCtrl', UsersInTicketCtrl)
+    .controller('UsersInTicketCreateCtrl', UsersInTicketCreateCtrl);
 //# sourceMappingURL=nQueue.js.map

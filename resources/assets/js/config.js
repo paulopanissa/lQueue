@@ -139,6 +139,13 @@ function config($ocLazyLoadProvider, $stateProvider, $urlRouterProvider, $authPr
             data: { pageTitle: 'Usuário no Guichê', requireLogin: true }
         })
 
+        .state('admin.ticket-create', {
+            url: '/ticket/user-in-ticket/create',
+            templateUrl: '/partials/admin/ticket/create.html',
+            controller: "UsersInTicketCreateCtrl as vm",
+            data: { pageTitle: "Novo Usuário no Guichê", requireLogin: true }
+        })
+
         .state('admin.ticket-edit', {
             url: '/ticket/user-in-ticket/{id}/edit',
             templateUrl: '/partials/admin/ticket/edit.html',
