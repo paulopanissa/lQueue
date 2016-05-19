@@ -49,7 +49,7 @@ Route::group(['prefix' => 'api'], function(){
            Route::get('users', 'Api\Setting\TicketController@getUsers');
            Route::get('tickets', 'Api\Setting\TicketController@getTickets');
            Route::get('users-in-tickets', 'Api\Setting\TicketController@getUsersInTickets');
-
+           Route::get('search/{id}', 'Api\Setting\TicketController@findUsersInTicket');
 
            Route::post('/user-in-tickets', 'Api\Setting\TicketController@storeUsersInTicket');
            Route::delete('/users-in-tickets-delete/{id}', 'Api\Setting\TicketController@destroyUsersInTickets');

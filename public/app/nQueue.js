@@ -115,6 +115,9 @@ angular
             get: function($url){
                 return $http.get(base + $url);
             },
+            find: function(url, data){
+                return $http.get(base + url + '/' + data);
+            },
             save: function(url, data){
                 return $http.post(base + url, data);
             },
@@ -1237,7 +1240,7 @@ function UsersEditCtrl($scope, $rootScope, $stateParams, UsersApi){
     }
 }
 
-function UsersInTicketCtrl($scope, $rootScope, Setting){
+function UsersInTicketCtrl($scope, socket, Setting){
     var vm = this,
         self = $scope;
 
@@ -1257,6 +1260,11 @@ function UsersInTicketCtrl($scope, $rootScope, Setting){
     self._init();
 
 
+    socket.on("usersIn:into", function(data){
+        self._usersInTicket.push(data);
+    });
+
+
     /**
      * Deletar Usuário do Guichê
      * @param _id
@@ -1271,7 +1279,7 @@ function UsersInTicketCtrl($scope, $rootScope, Setting){
     }
 }
 
-function UsersInTicketCreateCtrl($scope, Setting){
+function UsersInTicketCreateCtrl($scope, Setting, socket){
     var vm = this,
         self = $scope;
 
@@ -1281,18 +1289,43 @@ function UsersInTicketCreateCtrl($scope, Setting){
     self._init = function(){
         Setting.get('ticket/users').success(function(response){self.users = response});
         Setting.get('ticket/tickets').success(function(response){self.tickets=response});
-    }
+    };
     self._init();
 
     vm.register = function(form){
         Setting
             .save('ticket/user-in-tickets', form)
             .success(function(response){
-                console.log(response);
+                socket.emit("usersIn:add", response);
             });
     }
 
 }
+
+function UsersInTicketEditCtrl($scope, Setting, $stateParams){
+    var vm = this,
+        self = $scope;
+
+    var _id = $stateParams.id;
+
+    self.users = [];
+    self.tickets = [];
+
+    self._init = function(){
+        Setting.get('ticket/users').success(function(response){self.users = response});
+        Setting.get('ticket/tickets').success(function(response){self.tickets=response});
+    };
+    
+    self._init();
+
+    Setting
+        .find('ticket/search', _id)
+        .success(function(response){
+            console.log(response);
+        });
+
+}
+
 
 /**
  * Play Audios
@@ -1319,5 +1352,6 @@ angular
     .controller('UsersNewCtrl', UsersNewCtrl)
     .controller('UsersEditCtrl', UsersEditCtrl)
     .controller('UsersInTicketCtrl', UsersInTicketCtrl)
-    .controller('UsersInTicketCreateCtrl', UsersInTicketCreateCtrl);
+    .controller('UsersInTicketCreateCtrl', UsersInTicketCreateCtrl)
+    .controller('UsersInTicketEditCtrl', UsersInTicketEditCtrl);
 //# sourceMappingURL=nQueue.js.map

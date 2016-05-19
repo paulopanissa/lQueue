@@ -100,6 +100,9 @@ angular
             get: function($url){
                 return $http.get(base + $url);
             },
+            find: function(url, data){
+                return $http.get(base + url + '/' + data);
+            },
             save: function(url, data){
                 return $http.post(base + url, data);
             },

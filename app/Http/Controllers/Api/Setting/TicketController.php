@@ -50,6 +50,9 @@ class TicketController extends Controller
         return $usersInTicket;
     }
 
+    public function findUsersInTicket($id){
+        return UsersTicketWindow::find($id);
+    }
 
     public function storeUsersInTicket(Request $request){
         $store = [
