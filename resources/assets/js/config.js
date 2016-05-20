@@ -166,6 +166,7 @@ angular
 
             // Grab the user from local storage and parse it to an object
             var user = JSON.parse(localStorage.getItem('user'));
+            var ticket = JSON.parse(localStorage.getItem('ticket'));
 
             // If there is any user data in local storage then the user is quite
             // likely authenticated. If their token is expired, or if they are
@@ -182,7 +183,7 @@ angular
                 // us to access it anywhere across the app. Here
                 // we are grabbing what is in local storage
                 $rootScope.currentUser = user;
-
+                $rootScope.ticketUser = (ticket) ? ticket : null;
                 // If the user is logged in and we hit the auth route we don't need
                 // to stay there and can send the user to the main state
                 if(toState.name === "auth") {

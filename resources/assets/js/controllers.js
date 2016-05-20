@@ -42,22 +42,28 @@ function AuthCtrl($auth, $state, $http, $scope, $rootScope){
                 // Stringify the returned data to prepare it
                 // to go into local storage
                 var user = JSON.stringify(response.data.user);
-
                 // Set the stringified user data into local storage
                 localStorage.setItem('user', user);
-
                 // The user's authenticated state gets flipped to
                 // true so we can now show parts of the UI that rely
                 // on the user being logged in
                 $rootScope.authenticated = true;
-
                 // Putting the user's data on $rootScope allows
                 // us to access it anywhere across the app
                 $rootScope.currentUser = response.data.user;
 
-                // Everything worked out so we can now redirect to
-                // the users state to view the data
-                $state.go('admin.queue');
+                $http.post('/api/authenticate/use-ticket', {id: $rootScope.currentUser.id})
+                    .then(function(response){
+
+                        var ticket = JSON.stringify(response.data);
+
+                        localStorage.setItem('ticket', ticket);
+
+                        $rootScope.ticketUser = response.data;
+                        // Everything worked out so we can now redirect to
+                        // the users state to view the data
+                        $state.go('admin.queue');
+                    });
             })
     }
 
@@ -78,12 +84,13 @@ function ProfileCtrl($http, $auth, $rootScope, $state){
         $auth.logout().then(function() {
             // Remove the authenticated user from local storage
             localStorage.removeItem('user');
+            localStorage.removeItem('ticket');
             // Flip authenticated to false so that we no longer
             // show UI elements dependant on the user being logged in
             $rootScope.authenticated = false;
             // Remove the current user info from rootscope
             $rootScope.currentUser = null;
-
+            $rootScope.ticketUser = null;
             $state.go('auth', {})
         });
     }

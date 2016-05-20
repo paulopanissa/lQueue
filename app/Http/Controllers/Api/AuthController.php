@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\User;
 use Illuminate\Http\Request;
 use Auth;
 use JWTAuth;
@@ -55,5 +56,23 @@ class AuthController extends Controller
         }
         // the token is valid and we have found the user via the sub claim
         return response()->json(compact('user'));
+    }
+
+    public function getTicketWindows(Request $request)
+    {
+        $user = User::find($request->id);
+        $ticket = $user->tickets()->first();
+        if($ticket){
+            $return = [
+                'ticket' => true,
+                'number' => $ticket->number,
+                'name' => $ticket->name
+            ];
+        }else {
+            $return = [
+                'ticket' => false
+            ];
+        }
+        return response()->json($return);
     }
 }

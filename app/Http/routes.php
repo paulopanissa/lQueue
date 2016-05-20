@@ -20,6 +20,7 @@ Route::group(['prefix' => 'api'], function(){
      */
     Route::post('authenticate', 'Api\AuthController@authenticate');
     Route::get('authenticate/user', 'Api\AuthController@getAuthenticatedUser');
+    Route::post('authenticate/use-ticket', 'Api\AuthController@getTicketWindows');
 
     /**
      * Rotas Autenticadas pelo jwt

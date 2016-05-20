@@ -320,6 +320,7 @@ angular
 
             // Grab the user from local storage and parse it to an object
             var user = JSON.parse(localStorage.getItem('user'));
+            var ticket = JSON.parse(localStorage.getItem('ticket'));
 
             // If there is any user data in local storage then the user is quite
             // likely authenticated. If their token is expired, or if they are
@@ -336,7 +337,7 @@ angular
                 // us to access it anywhere across the app. Here
                 // we are grabbing what is in local storage
                 $rootScope.currentUser = user;
-
+                $rootScope.ticketUser = (ticket) ? ticket : null;
                 // If the user is logged in and we hit the auth route we don't need
                 // to stay there and can send the user to the main state
                 if(toState.name === "auth") {
@@ -740,22 +741,28 @@ function AuthCtrl($auth, $state, $http, $scope, $rootScope){
                 // Stringify the returned data to prepare it
                 // to go into local storage
                 var user = JSON.stringify(response.data.user);
-
                 // Set the stringified user data into local storage
                 localStorage.setItem('user', user);
-
                 // The user's authenticated state gets flipped to
                 // true so we can now show parts of the UI that rely
                 // on the user being logged in
                 $rootScope.authenticated = true;
-
                 // Putting the user's data on $rootScope allows
                 // us to access it anywhere across the app
                 $rootScope.currentUser = response.data.user;
 
-                // Everything worked out so we can now redirect to
-                // the users state to view the data
-                $state.go('admin.queue');
+                $http.post('/api/authenticate/use-ticket', {id: $rootScope.currentUser.id})
+                    .then(function(response){
+
+                        var ticket = JSON.stringify(response.data);
+
+                        localStorage.setItem('ticket', ticket);
+
+                        $rootScope.ticketUser = response.data;
+                        // Everything worked out so we can now redirect to
+                        // the users state to view the data
+                        $state.go('admin.queue');
+                    });
             })
     }
 
@@ -776,12 +783,13 @@ function ProfileCtrl($http, $auth, $rootScope, $state){
         $auth.logout().then(function() {
             // Remove the authenticated user from local storage
             localStorage.removeItem('user');
+            localStorage.removeItem('ticket');
             // Flip authenticated to false so that we no longer
             // show UI elements dependant on the user being logged in
             $rootScope.authenticated = false;
             // Remove the current user info from rootscope
             $rootScope.currentUser = null;
-
+            $rootScope.ticketUser = null;
             $state.go('auth', {})
         });
     }
